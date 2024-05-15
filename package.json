@@ -3,32 +3,40 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@apollo/client": "^3.8.7",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.16",
     "@mui/material": "^5.14.15",
+    "@react-native-async-storage/async-storage": "^1.19.5",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.59",
-    "@types/react": "^18.2.33",
+    "@types/react": "^18.2.22",
     "@types/react-dom": "^18.2.14",
+    "apollo3-cache-persist": "^0.14.1",
+    "blob-util": "^2.0.2",
     "change-case": "^5.1.2",
+    "graphql": "^16.8.1",
+    "html2canvas": "^1.4.1",
     "papaparse": "^5.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-indexed-db-hook": "^1.0.14",
     "react-qr-code": "^2.0.12",
     "react-scripts": "5.0.1",
-    "typescript": "^4.9.5",
+    "react-virtualized-auto-sizer": "^1.0.20",
+    "react-window": "^1.8.10",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "codegen": "graphql-codegen -r dotenv/config"
   },
   "eslintConfig": {
     "extends": [
@@ -49,6 +57,11 @@
     ]
   },
   "devDependencies": {
-    "@types/papaparse": "^5.3.11"
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/client-preset": "^4.1.0",
+    "@types/papaparse": "^5.3.11",
+    "@types/react-window": "^1.8.8",
+    "@types/react-virtualized-auto-sizer": "^1.0.3",
+    "dotenv": "^16.3.1"
   }
 }

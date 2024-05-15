@@ -16,15 +16,21 @@ export const DBConfig: IndexedDBProps = {
             {name: "storage", keypath: "storage", options: {unique: false}},
             {name: "manufactorer", keypath: "manufactorer", options: {unique: false}},
             {name: "price", keypath: "price", options: {unique: false}},
-            {name: "datasheetUrl", keypath: "datasheetUrl", options: {unique: false}}
+            {name: "datasheetUrl", keypath: "datasheetUrl", options: {unique: false}},
+            {name: "image", keypath: "image", options: {unique: false}},
+            {name: "attributes", keypath: "attributes", options: {unique: false}},
+            {name: "description", keypath: "description", options: {unique: false}}
         ],
       },
       {
         store: "storage",
         storeConfig: { keyPath: "id", autoIncrement: true },
         storeSchema: [
-          { name: "name", keypath: "name", options: { unique: false } },
-          { name: "email", keypath: "email", options: { unique: false } },
+          { name: "boxName", keypath: "boxName", options: { unique: true } },
+          { name: "box", keypath: "box", options: {unique: true}},
+          { name: "shortName", keypath: "shortName", options: {unique: true}},
+          { name: "row", keypath: "row", options: {unique: true}},
+          { name: "col", keypath: "col", options: { unique: true}},
         ],
       }
     ],

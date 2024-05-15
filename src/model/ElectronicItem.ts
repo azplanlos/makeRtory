@@ -8,11 +8,17 @@ export type ElectronicItem = {
     manufactorer?: string
     price?: number
     datasheetUrl?: string
+    image?: Blob
+    imageUrl?: string
+    attributes?: Map<string, string>
+    description?: string,
+    tags?: string[]
 }
 
 export type StorageItem = {
-    box: number
-    boxName?: string
-    row: number
-    col: number
+    box: number;
+    boxName?: string;
+    shortName: string;
+    row: number;
+    col: number;
 }

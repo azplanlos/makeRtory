@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Papa from "papaparse";
-import { Button, styled } from "@mui/material";
+import { Button, IconButton, Input, styled } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { ElectronicItem } from "../model/ElectronicItem";
+import { ElectronicItem, StorageItem } from "../model/ElectronicItem";
 import { camelCase } from "change-case";
 import { useIndexedDB } from "react-indexed-db-hook";
 
@@ -74,18 +74,16 @@ function parseCsv(
 export type ImportCsvProps = {
   update: (parts: ElectronicItem[]) => void;
   getAll: () => Promise<ElectronicItem[]>;
+  getAllStorage: () => Promise<StorageItem[]>;
 };
 
 export default function ImportCsv(props: ImportCsvProps) {
-  const [file, setFile] = useState();
   const { add, clear } = useIndexedDB("parts");
+  var fileUp: HTMLInputElement | null;
+
   return (
-    <Button
-      component="label"
-      variant="contained"
-      startIcon={<CloudUploadIcon />}
-    >
-      Upload file
+    <IconButton onClick={() => fileUp?.click()}>
+      <CloudUploadIcon />
       <VisuallyHiddenInput
         type="file"
         onChange={(e) => {
@@ -93,7 +91,8 @@ export default function ImportCsv(props: ImportCsvProps) {
           parseCsv(e.target.files, add, props.update, props.getAll);
           e.target.value = "";
         }}
+        ref={(fileUpload) => {fileUp = fileUpload;}}
       />
-    </Button>
+    </IconButton>
   );
 }
