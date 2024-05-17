@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import ItemRowOverview from "./Item";
+import ItemRowOverview from "./ItemOverview/Item";
 import { ElectronicItem, StorageItem } from "./model/ElectronicItem";
 import {
   Card,
@@ -21,9 +21,11 @@ import { DBConfig } from "./database/DBSchemaConfig";
 import { initDB, useIndexedDB } from "react-indexed-db-hook";
 import ImportCsv from "./database/ImportCsv";
 import Menubar from "./Menubar";
-import ItemDetailCard from "./ItemDetailCard";
-import ItemOverview from "./ItemOverview";
+import ItemDetailCard from "./ItemOverview/ItemDetailCard";
+import ItemOverview from "./ItemOverview/ItemOverview";
 import { Pages } from "./pages";
+import SettingsTable from "./Settings/SettingsTable";
+import StorageOverview from "./StorageView/StorageOverview";
 
 initDB(DBConfig);
 
@@ -63,9 +65,13 @@ function App() {
       currentPage={currentPage}
       setCurrentPage={setCurrentPage}
       />
-    <div className="App" style={{height: "100%", borderColor: "red", border: 5}}>
-      {currentPage === Pages.OVERVIEW ? <ItemOverview parts={parts} setParts={setParts} selectedItem={selectedItem} setSelectedItem={setSelectedItem} 
-        searchString={searchString} showAddRow={showAddRow} storages={storages} /> : <></>}
+    <div className="App" style={{height: "90vh", borderColor: "red", border: 5}}>
+      {currentPage === Pages.OVERVIEW ? <ItemOverview parts={parts} setParts={setParts}
+        selectedItem={selectedItem} setSelectedItem={setSelectedItem} 
+        searchString={searchString} showAddRow={showAddRow} storages={storages}
+        onCloseEdit={() => setShowAddRow(false)} /> : <></>}
+      {currentPage === Pages.SETTINGS && <SettingsTable />}
+      {currentPage === Pages.STORAGE && <StorageOverview />}
     </div>
     </ThemeProvider>
   );

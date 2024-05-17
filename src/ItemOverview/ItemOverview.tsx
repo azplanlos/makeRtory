@@ -3,8 +3,8 @@ import { Grid, TableContainer, Paper, Table, TableHead, TableRow, TableBody } fr
 import ItemRowOverview from "./Item";
 import { useIndexedDB } from "react-indexed-db-hook";
 import ItemDetailCard from "./ItemDetailCard";
-import { ElectronicItem, StorageItem } from "./model/ElectronicItem";
-import { styledHeaderCell } from "./StyledHeaderCell";
+import { ElectronicItem, StorageItem } from "../model/ElectronicItem";
+import { styledHeaderCell } from "../StyledHeaderCell";
 
 type ItemOverviewProps = {
     parts?: ElectronicItem[];
@@ -13,11 +13,12 @@ type ItemOverviewProps = {
     setSelectedItem: (item: string) => void;
     searchString: string;
     showAddRow: boolean;
+    onCloseEdit: () => void;
     storages: StorageItem[];
 }
 
 export default function ItemOverview(props: ItemOverviewProps) {
-    const { getAll, deleteRecord } = useIndexedDB("parts");
+    const { getAll, deleteRecord, add, getByIndex } = useIndexedDB("parts");
     var [editedItem, setEditedItem] = useState<string>("");
 
     let emptyItem: ElectronicItem = {
@@ -30,21 +31,40 @@ export default function ItemOverview(props: ItemOverviewProps) {
         getAll().then((partsFromDB) => {
           return props.setParts(partsFromDB);
         });
-      }, []);
+      }, [getAll, props.setParts]);
 
     const deleteItem = (item: ElectronicItem) => {
         if (item.partNumber) {
-            deleteRecord(item.partNumber);
-            props.setParts(props.parts?.filter(part => part.partNumber !== item.partNumber) || []);
-            props.setSelectedItem("");
+          props.setParts(props.parts?.filter(part => part.partNumber !== item.partNumber) || []);
+          props.setSelectedItem("");
+          deleteRecord(item.partNumber);
         }
     }
 
-    const detail = (props.selectedItem !== "") ? <Grid item xs={4}><ItemDetailCard item={props.parts?.filter((p) => p.partNumber === props.selectedItem)[0]} setItem={(item) => updateItem(item, props.parts, props.setParts)} /></Grid> : ""
+    const updateItem = (item: ElectronicItem, originalPartNumber?: string) => {
+      var newItems = props.parts?.filter((eitem) => eitem.partNumber !== item.partNumber);
+      if (newItems === undefined) {
+        newItems = [];
+      }
+      newItems.push(item);
+      props.setParts(newItems.sort((a, b) => (a.partNumber ?? '').localeCompare(b.partNumber ?? '')));
+      props.onCloseEdit();
+      setEditedItem('');
+      getByIndex('partNumber', originalPartNumber || item.partNumber!!).then(storedItem => {
+        if (storedItem) deleteRecord(storedItem.partNumber);
+        add(item);
+      },
+      error => {
+        console.log(error);
+        add(item);
+      })
+    }
 
-    return <Grid container>
+    const detail = (props.selectedItem !== "" && editedItem === '') ? <Grid item xs={4}><ItemDetailCard item={props.parts?.filter((p) => p.partNumber === props.selectedItem)[0]} setItem={(item) => updateItem(item, item.partNumber)} cardClose={() => props.setSelectedItem('')} /></Grid> : ""
+
+    return <Grid container height="100%">
     <Grid item xs={props.selectedItem === "" ? 12: 8} height="100%">
-  <TableContainer component={Paper} style={{marginBottom: "1%", height: "90%"}}>
+  <TableContainer component={Paper} style={{marginBottom: "1%", height: "100%"}}>
     <Table sx={{ minWidth: 650, height: "100%" }} aria-label="simple table" stickyHeader style={{overflow: "scroll"}}>
       <TableHead style={{fontWeight: "bolder"}}>
         <TableRow>
@@ -70,10 +90,12 @@ export default function ItemOverview(props: ItemOverviewProps) {
             setSel={props.setSelectedItem}
             deleteItem={(item) => deleteItem(item)}
             edit={editedItem === part.partNumber && part.partNumber !== '' && part.partNumber !== undefined}
+            setEditItem={setEditedItem}
             storages={props.storages}
+            setItem={updateItem}
           ></ItemRowOverview>
         ))}
-        {editedItem === '' && props.showAddRow === true ? <ItemRowOverview edit={true} key="edit" item={emptyItem} setItem={(item) => updateItem(item, props.parts, props.setParts, setEditedItem)} storages={props.storages}/> : <></> }
+        {editedItem === '' && props.showAddRow === true ? <ItemRowOverview edit={true} key="edit" item={emptyItem} setItem={(item) => updateItem(item)} storages={props.storages}/> : <></> }
       </TableBody>
     </Table>
   </TableContainer>
@@ -81,14 +103,3 @@ export default function ItemOverview(props: ItemOverviewProps) {
   { detail }
   </Grid>
 }
-
-function updateItem(item: ElectronicItem, items: ElectronicItem[] | undefined, setItems: (items: ElectronicItem[]) => void, setEditedItem?: (item: string) => void): void {
-    var newItems = items?.filter((eitem) => eitem.partNumber !== item.partNumber);
-    if (newItems === undefined) {
-      newItems = [];
-    }
-    newItems.push(item);
-    console.log("new item: " + item.partNumber);
-    setItems(newItems.sort((a, b) => (a.partNumber ?? '').localeCompare(b.partNumber ?? '')));
-    if (setEditedItem !== undefined) setEditedItem(item.partNumber || '');
-  }

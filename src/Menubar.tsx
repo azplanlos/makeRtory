@@ -18,6 +18,7 @@ import { useState } from 'react';
 import ListIcon from '@mui/icons-material/List';
 import StorageIcon from '@mui/icons-material/Storage';
 import { Pages } from './pages';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -104,9 +105,9 @@ export default function Menubar(props: menubarProps) {
           >
             makeRtory
           </Typography>
-          <IconButton onClick={props.addItem}><Add /></IconButton>
-          <ExportCsv getAll={props.importCsv.getAll} getAllStorage={props.importCsv.getAllStorage} exportType={props.currentPage} />
-          <ImportCsv update={props.importCsv.update} getAll={props.importCsv.getAll} getAllStorage={props.importCsv.getAllStorage}></ImportCsv>
+          <IconButton onClick={props.addItem} disabled={props.currentPage === Pages.SETTINGS}><Add /></IconButton>
+          <ExportCsv getAll={props.importCsv.getAll} getAllStorage={props.importCsv.getAllStorage} exportType={props.currentPage} disabled={props.currentPage === Pages.SETTINGS} />
+          <ImportCsv update={props.importCsv.update} getAll={props.importCsv.getAll} getAllStorage={props.importCsv.getAllStorage} disabled={props.currentPage === Pages.SETTINGS}></ImportCsv>
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
@@ -116,6 +117,7 @@ export default function Menubar(props: menubarProps) {
               inputProps={{ 'aria-label': 'search' }}
               value={props.searchString}
               onChange={(event) => props.setSearchString(event.target.value)}
+              disabled={props.currentPage !== Pages.OVERVIEW}
             />
           </Search>
         </Toolbar>
@@ -140,6 +142,15 @@ export default function Menubar(props: menubarProps) {
             <StorageIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>Lager</ListItemText>
+        </MenuItem>
+        <MenuItem onClick={() => {
+          props.setCurrentPage(Pages.SETTINGS);
+          closeMenu();
+        }}>
+          <ListItemIcon>
+            <SettingsIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Einstellungen</ListItemText>
         </MenuItem>
     </MenuList>
     </Menu>

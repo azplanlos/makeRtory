@@ -56,6 +56,7 @@ export type ExportCsvProps = {
   getAll: () => Promise<ElectronicItem[]>;
   getAllStorage: () => Promise<StorageItem[]>;
   exportType: Pages;
+  disabled: boolean;
 };
 
 export default function ExportCsv(props: ExportCsvProps) {
@@ -65,7 +66,7 @@ export default function ExportCsv(props: ExportCsvProps) {
         exportStorageCsv(props.getAllStorage);
       } else {
         exportCsv(props.getAll)
-    }}}>
+    }}} disabled={props.disabled}>
       <CloudDownload />
     </IconButton>
   );

@@ -5,24 +5,27 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { ElectronicItem } from './model/ElectronicItem';
-import { Avatar, Box, Chip, Dialog, DialogTitle, ExtendButtonBase, Grid, IconButton, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
-import { ConstructionOutlined, Info, Print, Refresh } from '@mui/icons-material';
-import UpdateAttributesFromOkopart from './UpdateAttributes';
+import { ElectronicItem } from '../model/ElectronicItem';
+import { Avatar, Box, CardHeader, Chip, Dialog, DialogTitle, ExtendButtonBase, Grid, IconButton, List, ListItem, ListItemIcon, ListItemText, Stack } from '@mui/material';
+import MoreIcon from '@mui/icons-material/More';
+import UpdateAttributesFromOkopart from '../UpdateAttributes';
 import { useIndexedDB } from 'react-indexed-db-hook';
-import { CSSProperties } from 'react';
+import { CSSProperties, useState } from 'react';
 import { ComponentType } from "react";
 import { FixedSizeList as _FixedSizeList, FixedSizeListProps, ListChildComponentProps } from "react-window";
 import { JSX } from 'react/jsx-runtime';
 import AutoSizer, { Size } from 'react-virtualized-auto-sizer';
-import StockCounter from './StockCounter';
+import StockCounter from '../StockCounter';
+import CloseIcon from '@mui/icons-material/Close';
+import Print from '@mui/icons-material/Print';
 
 const FixedSizeList = _FixedSizeList as ComponentType<FixedSizeListProps>;
 
 
 export type ItemDetailProps = {
-  item: ElectronicItem | undefined,
-  setItem: (item: ElectronicItem) => void
+  item: ElectronicItem | undefined;
+  setItem: (item: ElectronicItem) => void;
+  cardClose: () => void;
 }
 
 async function saveImage(ref: React.RefObject<HTMLImageElement>, setItem: (item: ElectronicItem) => void, item?: ElectronicItem) {
@@ -43,9 +46,6 @@ const Row: React.FC<ListChildComponentProps<Map<string, string>>> = ({ index, st
       <Grid item xs={12}>
         <Box>
           <ListItem>
-            <ListItemIcon>
-              <Avatar variant="rounded"></Avatar>
-            </ListItemIcon>
             <ListItemText
               primary={Array.from(data.values())[index]}
               secondary={Array.from(data.keys())[index]} />
@@ -80,7 +80,6 @@ function AddTagDialog(props: AddTagDialogProps) {
 }
 
 export default function ItemDetailCard(props: ItemDetailProps) {
-  const { update } = useIndexedDB("parts");
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -95,12 +94,15 @@ export default function ItemDetailCard(props: ItemDetailProps) {
   const setItem = props.setItem;
   const printRef = React.useRef<HTMLImageElement>(null);
 
-  const blobUrl = item?.image !== undefined && item?.image?.size > 0 ? URL.createObjectURL(item.image) : 
-    item?.imageUrl === undefined ? "/image-solid.png" : undefined;
+  const [blobUrl, setBlobUrl] = useState<string | undefined>("/image-solid.png");
+  React.useEffect(() => {
+    setBlobUrl(item?.image !== undefined && item?.image?.size > 0 ? URL.createObjectURL(item.image) : 
+    item?.imageUrl === undefined ? "/image-solid.png" : undefined);
+  }, [open, props.item?.imageUrl]);
+
   function updateItem(newItem: ElectronicItem): void {
     console.log("update item");
     setItem(newItem);
-    update(newItem);
   }
 
   var listItems: JSX.Element[] = [];
@@ -110,47 +112,64 @@ export default function ItemDetailCard(props: ItemDetailProps) {
   })
 
   return (
-    <Card sx={{ maxWidth: "100%", height: "100%" }}>
+    <AutoSizer>{(cardSize: Size) => 
+    <Card sx={{ height: cardSize.height, width: cardSize.width}}>
+      <CardHeader
+        avatar={
+          <Avatar aria-label="recipe">
+            {item?.storage?.shortName}
+          </Avatar>
+        }
+        action={
+          <>
+          <IconButton onClick={handleClickOpen}><MoreIcon /></IconButton>
+          <IconButton aria-label="print label">
+          <Print />
+        </IconButton>
+        <UpdateAttributesFromOkopart item={item} onUpdate={(newItem: ElectronicItem) => updateItem(newItem)} />
+          <IconButton aria-label="settings" onClick={() => props.cardClose()}>
+            <CloseIcon />
+          </IconButton>
+          </>
+        }
+        title={item?.title ?? item?.partNumber}
+        subheader={item?.manufactorer}
+      />
       <CardMedia
         component="img" 
-        sx={{ height: "200px"}}
+        sx={{ height: "30%"}}
         image={blobUrl ?? "https://corsproxy.io/?" + encodeURI(item?.imageUrl ?? "https://placehold.co/300x300")}
         title={item?.title ?? item?.partNumber}
         onLoad={(event) => saveImage(printRef, updateItem, item)}
         ref={printRef}
         crossOrigin='anonymous'
       />
-      <CardContent>
-        <List>
-          { item?.tags?.map( tag => <ListItem key={tag}>
+      <CardContent style={{height: '40%'}}>
+        <Stack direction="row" spacing={1}>
+          { item?.tags?.map( tag =>
             <Chip
               label={tag}
-              onDelete={elem => console.log('delete')}
-            />
-          </ListItem>)}
-          <ListItem>
-            <Button onClick={handleClickOpen}>hinzufügen</Button>
+              onDelete={elem => {
+                item.tags = item.tags?.filter(tg => tg !== tag);
+                updateItem(item);
+              }}
+            />)
+          }
+          
+        </Stack>
+        
             <AddTagDialog
         open={open}
         onClose={handleClose}
       />
-          </ListItem>
-        </List>
-        <Typography gutterBottom variant="h5" component="div">
-          {item?.title ?? item?.partNumber}
-        </Typography>
-        {item?.description}
         <StockCounter count={item?.stock || 0} setCount={(count) => { console.log("new count: " + count); item!!.stock = count; updateItem(item!!) }} />
-        <FixedSizeList itemData={item?.attributes} itemSize={50} height={300} itemCount={item?.attributes?.size || 0} width={'100%'}>
+        {item?.description}
+        <AutoSizer>{(size: Size) => <FixedSizeList itemData={item?.attributes} itemSize={50} height={size.height} itemCount={item?.attributes?.size || 0} width={size.width}>
           {Row}
-        </FixedSizeList>
+        </FixedSizeList>}</AutoSizer>
+        
       </CardContent>
-      <CardActions>
-        <IconButton aria-label="print label">
-          <Print />
-        </IconButton>
-        <UpdateAttributesFromOkopart item={item} onUpdate={(newItem: ElectronicItem) => updateItem(newItem)} />
-      </CardActions>
-    </Card>
+    </Card>}
+    </AutoSizer>
   );
 }

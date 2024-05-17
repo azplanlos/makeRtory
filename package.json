@@ -8,6 +8,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.16",
     "@mui/material": "^5.14.15",
+    "@puhl/mui-currency-textfield": "^1.0.5",
     "@react-native-async-storage/async-storage": "^1.19.5",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -21,6 +22,7 @@
     "change-case": "^5.1.2",
     "graphql": "^16.8.1",
     "html2canvas": "^1.4.1",
+    "luxon": "^3.4.4",
     "papaparse": "^5.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -32,6 +34,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "prepare": "npm run buildApi",
+    "buildApi": "openapi-generator-cli generate -i api/digikey-search.json -g typescript-fetch -o src/openapi",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -59,9 +63,11 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.0",
     "@graphql-codegen/client-preset": "^4.1.0",
+    "@openapitools/openapi-generator-cli": "^2.13.4",
+    "@types/luxon": "^3.4.2",
     "@types/papaparse": "^5.3.11",
-    "@types/react-window": "^1.8.8",
     "@types/react-virtualized-auto-sizer": "^1.0.3",
+    "@types/react-window": "^1.8.8",
     "dotenv": "^16.3.1"
   }
 }

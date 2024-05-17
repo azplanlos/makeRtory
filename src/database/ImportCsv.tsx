@@ -75,6 +75,7 @@ export type ImportCsvProps = {
   update: (parts: ElectronicItem[]) => void;
   getAll: () => Promise<ElectronicItem[]>;
   getAllStorage: () => Promise<StorageItem[]>;
+  disabled?: boolean;
 };
 
 export default function ImportCsv(props: ImportCsvProps) {
@@ -82,7 +83,7 @@ export default function ImportCsv(props: ImportCsvProps) {
   var fileUp: HTMLInputElement | null;
 
   return (
-    <IconButton onClick={() => fileUp?.click()}>
+    <IconButton onClick={() => fileUp?.click()} disabled={props.disabled}>
       <CloudUploadIcon />
       <VisuallyHiddenInput
         type="file"
