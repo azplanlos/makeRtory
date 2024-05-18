@@ -22,7 +22,7 @@ function parseCsv(
   files: FileList | null,
   add: (value: any, key?: any) => Promise<number>,
   update: (parts: ElectronicItem[]) => void,
-  getAll: () => Promise<ElectronicItem[]>
+  getAll: () => Promise<ElectronicItem[]>,
 ) {
   if (files !== null) {
     [...files].forEach((file) => {
@@ -48,14 +48,14 @@ function parseCsv(
               storage: result.data.storage,
               datasheetUrl: result.data.datasheetUrl,
               packageFormat: result.data.packageFormat,
-              value: result.data.value
+              value: result.data.value,
             }).then(
               (event) => {
                 console.log("ID Generated: ", event);
               },
               (error) => {
                 console.log(error);
-              }
+              },
             );
             console.log(result.data);
           }
@@ -92,7 +92,9 @@ export default function ImportCsv(props: ImportCsvProps) {
           parseCsv(e.target.files, add, props.update, props.getAll);
           e.target.value = "";
         }}
-        ref={(fileUpload) => {fileUp = fileUpload;}}
+        ref={(fileUpload) => {
+          fileUp = fileUpload;
+        }}
       />
     </IconButton>
   );

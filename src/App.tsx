@@ -31,14 +31,13 @@ initDB(DBConfig);
 
 const darkTheme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: "dark",
   },
 });
 
-
 function App() {
   const [parts, setParts] = useState<ElectronicItem[]>();
-  const [searchString, setSearchString] = useState('');
+  const [searchString, setSearchString] = useState("");
   const [showAddRow, setShowAddRow] = useState(false);
   const [selectedItem, setSelectedItem] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<Pages>(Pages.OVERVIEW);
@@ -48,31 +47,57 @@ function App() {
   const getAllStorages = useIndexedDB("storage").getAll;
 
   useEffect(() => {
-    getAllStorages().then(dbStorages => {
+    getAllStorages().then((dbStorages) => {
       setStorages(dbStorages);
-    })
+    });
   }, [getAllStorages]);
 
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <Menubar importCsv={{update: setParts, getAll : getAll, getAllStorage: getAllStorages}} 
-        searchString={searchString} setSearchString={(search) => {setSearchString(search); setSelectedItem('');}}
+      <Menubar
+        importCsv={{
+          update: setParts,
+          getAll: getAll,
+          getAllStorage: getAllStorages,
+        }}
+        searchString={searchString}
+        setSearchString={(search) => {
+          setSearchString(search);
+          setSelectedItem("");
+        }}
         addItem={() => {
           setShowAddRow(true);
-        }
-      }
-      currentPage={currentPage}
-      setCurrentPage={setCurrentPage}
+        }}
+        currentPage={currentPage}
+        setCurrentPage={(page) => {
+          setCurrentPage(page);
+          setShowAddRow(false);
+        }}
       />
-    <div className="App" style={{height: "90vh", borderColor: "red", border: 5}}>
-      {currentPage === Pages.OVERVIEW ? <ItemOverview parts={parts} setParts={setParts}
-        selectedItem={selectedItem} setSelectedItem={setSelectedItem} 
-        searchString={searchString} showAddRow={showAddRow} storages={storages}
-        onCloseEdit={() => setShowAddRow(false)} /> : <></>}
-      {currentPage === Pages.SETTINGS && <SettingsTable />}
-      {currentPage === Pages.STORAGE && <StorageOverview />}
-    </div>
+      <div
+        className="App"
+        style={{ height: "90vh", borderColor: "red", border: 5 }}
+      >
+        {currentPage === Pages.OVERVIEW ? (
+          <ItemOverview
+            parts={parts}
+            setParts={setParts}
+            selectedItem={selectedItem}
+            setSelectedItem={setSelectedItem}
+            searchString={searchString}
+            showAddRow={showAddRow}
+            storages={storages}
+            onCloseEdit={() => setShowAddRow(false)}
+          />
+        ) : (
+          <></>
+        )}
+        {currentPage === Pages.SETTINGS && <SettingsTable />}
+        {currentPage === Pages.STORAGE && (
+          <StorageOverview storageItems={storages} addItem={showAddRow} setAddItem={setShowAddRow} setStorageItems={setStorages} />
+        )}
+      </div>
     </ThemeProvider>
   );
 }

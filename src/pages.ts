@@ -1,5 +1,5 @@
 export enum Pages {
-    OVERVIEW,
-    STORAGE,
-    SETTINGS
+  OVERVIEW,
+  STORAGE,
+  SETTINGS,
 }

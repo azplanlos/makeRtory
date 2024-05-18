@@ -23,11 +23,16 @@ const VisuallyHiddenInput = styled("input")({
 function exportCsv(getAll: () => Promise<ElectronicItem[]>) {
   console.log("exporting");
   getAll().then((data) => {
-    const text = Papa.unparse<ElectronicItem>(data.sort((a, b) => (a.partNumber ?? '').localeCompare(b.partNumber ?? '')), {
-      header: true,
-      skipEmptyLines: true,
-    });
-    const file = new Blob([text], {type: 'text/plain'});
+    const text = Papa.unparse<ElectronicItem>(
+      data.sort((a, b) =>
+        (a.partNumber ?? "").localeCompare(b.partNumber ?? ""),
+      ),
+      {
+        header: true,
+        skipEmptyLines: true,
+      },
+    );
+    const file = new Blob([text], { type: "text/plain" });
     const element = document.createElement("a");
     element.href = URL.createObjectURL(file);
     element.download = "makeRtory.csv";
@@ -39,11 +44,14 @@ function exportCsv(getAll: () => Promise<ElectronicItem[]>) {
 function exportStorageCsv(getAll: () => Promise<StorageItem[]>) {
   console.log("exporting storage");
   getAll().then((data) => {
-    const text = Papa.unparse<StorageItem>(data.sort((a, b) => (a.boxName ?? '').localeCompare(b.boxName ?? '')), {
-      header: true,
-      skipEmptyLines: true,
-    });
-    const file = new Blob([text], {type: 'text/plain'});
+    const text = Papa.unparse<StorageItem>(
+      data.sort((a, b) => (a.boxName ?? "").localeCompare(b.boxName ?? "")),
+      {
+        header: true,
+        skipEmptyLines: true,
+      },
+    );
+    const file = new Blob([text], { type: "text/plain" });
     const element = document.createElement("a");
     element.href = URL.createObjectURL(file);
     element.download = "makeRtoryStorage.csv";
@@ -61,12 +69,16 @@ export type ExportCsvProps = {
 
 export default function ExportCsv(props: ExportCsvProps) {
   return (
-    <IconButton onClick={() => {
-      if (props.exportType === Pages.STORAGE) {
-        exportStorageCsv(props.getAllStorage);
-      } else {
-        exportCsv(props.getAll)
-    }}} disabled={props.disabled}>
+    <IconButton
+      onClick={() => {
+        if (props.exportType === Pages.STORAGE) {
+          exportStorageCsv(props.getAllStorage);
+        } else {
+          exportCsv(props.getAll);
+        }
+      }}
+      disabled={props.disabled}
+    >
       <CloudDownload />
     </IconButton>
   );
