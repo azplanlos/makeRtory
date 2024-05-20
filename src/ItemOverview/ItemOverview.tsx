@@ -88,6 +88,7 @@ export default function ItemOverview(props: ItemOverviewProps) {
           }
           setItem={(item) => updateItem(item, item.partNumber)}
           cardClose={() => props.setSelectedItem("")}
+          storages={props.storages}
         />
       </Grid>
     ) : (

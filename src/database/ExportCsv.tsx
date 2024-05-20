@@ -12,15 +12,15 @@ function exportCsv(getAll: () => Promise<ElectronicItem[]>) {
   console.log("exporting");
   getAll().then((data) => {
     const text = Papa.unparse<CsvElectronicItem>(
-      data.map(item => {
-        const {storage, image, ...itemStoreData} = item as ElectronicItem;
-        return {
-          ...itemStoreData,
-          storage: `${item.storage?.box}.${item.storage?.row}.${item.storage?.col}`
-        } as CsvElectronicItem;
-      }).sort((a, b) =>
-        (a.partNumber ?? "").localeCompare(b.partNumber ?? ""),
-      ),
+      data
+        .map((item) => {
+          const { storage, image, ...itemStoreData } = item as ElectronicItem;
+          return {
+            ...itemStoreData,
+            storage: `${item.storage?.box}.${item.storage?.row}.${item.storage?.col}`,
+          } as CsvElectronicItem;
+        })
+        .sort((a, b) => (a.partNumber ?? "").localeCompare(b.partNumber ?? "")),
       {
         header: true,
         skipEmptyLines: true,

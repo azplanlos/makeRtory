@@ -10,7 +10,7 @@ import {
   IconButton,
 } from "@mui/material";
 import { TextSnippet } from "@mui/icons-material";
-import StorageComponent from "../model/StorageComponent";
+import StorageComponent, { unassignedStorage } from "../model/StorageComponent";
 import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
@@ -127,7 +127,7 @@ export default function ItemRowOverview(item: ElectronicItemProps) {
   );
   const storage =
     item.item?.storage !== undefined ? (
-      <StorageComponent storage={item.item?.storage} />
+      <StorageComponent storage={item.item?.storage} storages={item.storages} />
     ) : (
       ""
     );
@@ -229,15 +229,32 @@ export default function ItemRowOverview(item: ElectronicItemProps) {
             variant="standard"
             value={stor.box + "." + stor.row + "." + stor.col}
             onChange={(e) => {
-              const [box, row, col] = e.target.value.split('.');
-              const assignedStorage = item.storages.find(strg => strg.box === parseInt(box) && strg.row === parseInt(row) && strg.col === parseInt(col));
+              const [box, row, col] = e.target.value.split(".");
+              const assignedStorage = item.storages.find(
+                (strg) =>
+                  strg.box === parseInt(box) &&
+                  strg.row === parseInt(row) &&
+                  strg.col === parseInt(col),
+              );
               if (assignedStorage) setStor(assignedStorage);
               console.log(assignedStorage);
             }}
           >
-            { item.storages
-            .sort((a, b) => a.box === b.box ? (a.row === b.row ? a.col - b.col : a.row - b.row) : a.box - b.box)
-            .map(strg => <MenuItem value={`${strg.box}.${strg.row}.${strg.col}`}>{`${strg.boxName} (Fach ${strg.row}/${strg.col})`}</MenuItem>) }
+            {[
+              ...item.storages.sort((a, b) =>
+                a.box === b.box
+                  ? a.row === b.row
+                    ? a.col - b.col
+                    : a.row - b.row
+                  : a.box - b.box,
+              ),
+              unassignedStorage,
+            ].map((strg) => (
+              <MenuItem
+                value={`${strg.box}.${strg.row}.${strg.col}`}
+                disabled={strg.box < 0}
+              >{`${strg.boxName} (Fach ${strg.row}/${strg.col})`}</MenuItem>
+            ))}
           </Select>
         )}
       </TableCell>

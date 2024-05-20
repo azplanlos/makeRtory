@@ -2,7 +2,7 @@ import * as React from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import { ElectronicItem } from "../model/ElectronicItem";
+import { ElectronicItem, StorageItem } from "../model/ElectronicItem";
 import {
   Avatar,
   Box,
@@ -30,6 +30,7 @@ import AutoSizer, { Size } from "react-virtualized-auto-sizer";
 import StockCounter from "../StockCounter";
 import CloseIcon from "@mui/icons-material/Close";
 import Print from "@mui/icons-material/Print";
+import { unassignedStorage } from "../model/StorageComponent";
 
 const FixedSizeList = _FixedSizeList as ComponentType<FixedSizeListProps>;
 
@@ -37,6 +38,7 @@ export type ItemDetailProps = {
   item: ElectronicItem | undefined;
   setItem: (item: ElectronicItem) => void;
   cardClose: () => void;
+  storages: StorageItem[];
 };
 
 async function saveImage(
@@ -143,14 +145,20 @@ export default function ItemDetailCard(props: ItemDetailProps) {
     listItems.push();
   });
 
+  const storage =
+    props.storages.find(
+      (strg) =>
+        strg.box === props.item?.storage?.box &&
+        strg.row === props.item.storage.row &&
+        strg.col === props.item.storage.col,
+    ) || unassignedStorage;
+
   return (
     <AutoSizer>
       {(cardSize: Size) => (
         <Card sx={{ height: cardSize.height, width: cardSize.width }}>
           <CardHeader
-            avatar={
-              <Avatar aria-label="recipe">{item?.storage?.shortName}</Avatar>
-            }
+            avatar={<Avatar aria-label="recipe">{storage?.shortName}</Avatar>}
             action={
               <>
                 <IconButton onClick={handleClickOpen}>

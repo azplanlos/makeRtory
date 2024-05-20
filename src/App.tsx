@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import { ElectronicItem, StorageItem } from "./model/ElectronicItem";
-import {
-  CssBaseline,
-  ThemeProvider,
-  createTheme,
-} from "@mui/material";
+import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import { DBConfig } from "./database/DBSchemaConfig";
 import { initDB, useIndexedDB } from "react-indexed-db-hook";
 import Menubar from "./Menubar";
@@ -82,7 +78,12 @@ function App() {
         )}
         {currentPage === Pages.SETTINGS && <SettingsTable />}
         {currentPage === Pages.STORAGE && (
-          <StorageOverview storageItems={storages} addItem={showAddRow} setAddItem={setShowAddRow} setStorageItems={setStorages} />
+          <StorageOverview
+            storageItems={storages}
+            addItem={showAddRow}
+            setAddItem={setShowAddRow}
+            setStorageItems={setStorages}
+          />
         )}
       </div>
     </ThemeProvider>

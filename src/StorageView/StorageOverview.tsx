@@ -15,10 +15,11 @@ import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
 import AllInboxIcon from "@mui/icons-material/AllInbox";
 import AddIcon from "@mui/icons-material/Add";
-import AddDialog from "./AddDialog";
+import AddDialog, { generateShortName } from "./AddDialog";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import { useIndexedDB } from "react-indexed-db-hook";
+import DeleteDialog from "../ItemOverview/DeleteDialog";
 
 export type NestedStorageItem = StorageItem & {
   children: NestedStorageItem[];
@@ -53,7 +54,8 @@ export default function StorageOverview(props: StorageOverviewProps) {
   const [openEntries, setOpenEntries] = useState<number[]>([]);
   const [addEntry, setAddEntry] = useState<NestedStorageItem | null>(null);
   const [boxName, setBoxName] = useState("");
-  const {add, deleteRecord, getByIndex} = useIndexedDB("storage");
+  const [deleteItem, setDeleteItem] = useState<NestedStorageItem | null>(null);
+  const { add, deleteRecord, getByIndex } = useIndexedDB("storage");
 
   useEffect(() => {
     setBoxName("");
@@ -99,13 +101,7 @@ export default function StorageOverview(props: StorageOverviewProps) {
                 sx={{ pl: 4 }}
                 secondaryAction={
                   <IconButton
-                    onClick={() => {
-                      props.setStorageItems(props.storageItems.filter((e) => e !== fach));
-                      getByIndex("box", fach.box).then((entries: any) => {
-                        (Array.isArray(entries) ? entries : [entries]).filter((entry: any) => entry.row === fach.row && entry.col === fach.col)
-                            .forEach((entry: any) => deleteRecord(entry.id))});
-                    }}
-                    disabled={item.children.length <= 1}
+                    onClick={() => setDeleteItem(fach)}
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -133,6 +129,8 @@ export default function StorageOverview(props: StorageOverviewProps) {
     );
   };
 
+  const treeStorageItems = buildTree(props.storageItems);
+
   return (
     <>
       <List
@@ -145,27 +143,46 @@ export default function StorageOverview(props: StorageOverviewProps) {
           </ListSubheader>
         }
       >
-        { props.addItem && <ListItem secondaryAction={<IconButton onClick={
-            () => {
-                const boxNum = props.storageItems.reduce((max, entry) => entry.box > max ? entry.box : max, 0) + 1;
-                const fach = {
+        {props.addItem && (
+          <ListItem
+            secondaryAction={
+              <IconButton
+                onClick={() => {
+                  const boxNum =
+                    props.storageItems.reduce(
+                      (max, entry) => (entry.box > max ? entry.box : max),
+                      0,
+                    ) + 1;
+                  const fach = {
                     box: boxNum,
                     boxName: boxName,
-                    shortName: boxName,
+                    shortName: generateShortName(boxName, 1, 1),
                     row: 1,
-                    col: 1
-                } as StorageItem;
-                props.setStorageItems([...props.storageItems, fach]);
-                props.setAddItem(false);
-                add(fach);
-            }}><SaveIcon /></IconButton>} key="newBox">
-        <ListItemIcon>
-            <Inventory2Icon />
-          </ListItemIcon>
-          <TextField size="small" label="Name der Box" autoFocus value={boxName} onChange={(e) => setBoxName(e.target.value)}></TextField>
-            </ListItem>
-        }
-        {buildTree(props.storageItems).map((item) => itemEntry(item))}
+                    col: 1,
+                  } as StorageItem;
+                  props.setStorageItems([...props.storageItems, fach]);
+                  props.setAddItem(false);
+                  add(fach);
+                }}
+              >
+                <SaveIcon />
+              </IconButton>
+            }
+            key="newBox"
+          >
+            <ListItemIcon>
+              <Inventory2Icon />
+            </ListItemIcon>
+            <TextField
+              size="small"
+              label="Name der Box"
+              autoFocus
+              value={boxName}
+              onChange={(e) => setBoxName(e.target.value)}
+            ></TextField>
+          </ListItem>
+        )}
+        {treeStorageItems.map((item) => itemEntry(item))}
       </List>
       <AddDialog
         entry={addEntry}
@@ -175,6 +192,27 @@ export default function StorageOverview(props: StorageOverviewProps) {
           add(entry);
         }}
       />
+      <DeleteDialog
+        item={deleteItem}
+        itemName={`${deleteItem?.boxName} (Fach ${deleteItem?.row}/${deleteItem?.col})` || ""}
+        open={deleteItem !== null}
+        onClose={() => setDeleteItem(null)}
+        onDelete={(item: NestedStorageItem) => {
+          props.setStorageItems(props.storageItems.filter((e) => e !== item));
+          getByIndex("box", item.box).then((entries: any) => {
+            (Array.isArray(entries) ? entries : [entries])
+              .filter(
+                (entry: any) =>
+                  entry.row === item.row && entry.col === item.col,
+              )
+              .forEach((entry: any) => deleteRecord(entry.id));
+          });
+        }}
+      >
+        Dies wird alle Elemente dieses Fachs in den 'unbekannten Lagerort'
+        verschieben{props.storageItems.filter(item => item.box === deleteItem?.box).length === 1 ? ` und die Box '${deleteItem?.boxName}' ebenfalls löschen, da diese kein weiteres
+        Fach enthält` : ''}.
+      </DeleteDialog>
     </>
   );
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import {
   Button,
   Dialog,
@@ -10,12 +10,15 @@ import {
 
 type DeleteDialogProps = {
   itemName: string;
+  item?: any;
   open: boolean;
   onClose: () => void;
-  onDelete: () => void;
+  onDelete: (item: any) => void;
 };
 
-export default function DeleteDialog(props: DeleteDialogProps) {
+export default function DeleteDialog(
+  props: PropsWithChildren<DeleteDialogProps>,
+) {
   return (
     <Dialog
       open={props.open}
@@ -28,13 +31,21 @@ export default function DeleteDialog(props: DeleteDialogProps) {
         <DialogContentText id="alert-dialog-description">
           Soll der Eintrag <b>{props.itemName}</b> wirklich gelöscht werden?
         </DialogContentText>
+        {props.children && (
+          <DialogContentText
+            id="alert-dialog-note"
+            style={{ fontSize: "small", marginTop: "1%" }}
+          >
+            {props.children}
+          </DialogContentText>
+        )}
       </DialogContent>
       <DialogActions>
         <Button onClick={props.onClose}>Abbrechen</Button>
         <Button
           onClick={() => {
             props.onClose();
-            props.onDelete();
+            props.onDelete(props.item);
           }}
           autoFocus
         >

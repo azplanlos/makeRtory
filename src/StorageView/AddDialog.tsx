@@ -21,6 +21,17 @@ type AddDialogProps = {
   onAddEntry: (item: StorageItem) => void;
 };
 
+export function generateShortName(
+  boxName: string,
+  row: number,
+  col: number,
+): string {
+  return `${boxName
+    .split(" ")
+    .map((nm) => nm.charAt(0).toUpperCase())
+    .join("")}${row.toString()}.${col.toString()}`;
+}
+
 export default function AddDialog(props: AddDialogProps) {
   const [row, setRow] = useState(1);
   const [col, setCol] = useState(1);
@@ -110,6 +121,11 @@ export default function AddDialog(props: AddDialogProps) {
           onClick={() => {
             props.setAddEntry(null);
             const entry = { ...props.entry } as NestedStorageItem;
+            entry.shortName = generateShortName(
+              entry.boxName || "unbekannte Box",
+              row,
+              col,
+            );
             entry.row = row;
             entry.col = col;
             entry.children = [];
