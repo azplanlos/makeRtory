@@ -111,7 +111,7 @@ export default function StorageOverview(props: StorageOverviewProps) {
                     onClick={() => {
                       props.setStorageItems(props.storageItems.filter((e) => e !== fach));
                       getByIndex("box", fach.box).then((entries: any) => {
-                        entries.filter((entry: any) => entry.row === fach.row && entry.col === fach.col)
+                        (Array.isArray(entries) ? entries : [entries]).filter((entry: any) => entry.row === fach.row && entry.col === fach.col)
                             .forEach((entry: any) => deleteRecord(entry.id))});
                     }}
                     disabled={item.children.length <= 1}
