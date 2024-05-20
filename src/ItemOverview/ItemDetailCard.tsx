@@ -1,10 +1,7 @@
 import * as React from "react";
 import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import { ElectronicItem } from "../model/ElectronicItem";
 import {
   Avatar,
@@ -13,19 +10,15 @@ import {
   Chip,
   Dialog,
   DialogTitle,
-  ExtendButtonBase,
   Grid,
   IconButton,
-  List,
   ListItem,
-  ListItemIcon,
   ListItemText,
   Stack,
 } from "@mui/material";
 import MoreIcon from "@mui/icons-material/More";
-import UpdateAttributesFromOkopart from "../UpdateAttributes";
-import { useIndexedDB } from "react-indexed-db-hook";
-import { CSSProperties, useState } from "react";
+import UpdateAttributesFromDigikey from "../UpdateAttributes";
+import { useState } from "react";
 import { ComponentType } from "react";
 import {
   FixedSizeList as _FixedSizeList,
@@ -104,10 +97,6 @@ function AddTagDialog(props: AddTagDialogProps) {
     onClose("");
   };
 
-  const handleListItemClick = (value: string) => {
-    onClose(value);
-  };
-
   return (
     <Dialog onClose={handleClose} open={open}>
       <DialogTitle>Neue Kategorie</DialogTitle>
@@ -141,7 +130,7 @@ export default function ItemDetailCard(props: ItemDetailProps) {
           ? "/image-solid.png"
           : undefined,
     );
-  }, [open, props.item?.imageUrl]);
+  }, [open, props.item?.imageUrl, item?.image, item?.imageUrl]);
 
   function updateItem(newItem: ElectronicItem): void {
     console.log("update item");
@@ -170,7 +159,7 @@ export default function ItemDetailCard(props: ItemDetailProps) {
                 <IconButton aria-label="print label">
                   <Print />
                 </IconButton>
-                <UpdateAttributesFromOkopart
+                <UpdateAttributesFromDigikey
                   item={item}
                   onUpdate={(newItem: ElectronicItem) => updateItem(newItem)}
                 />

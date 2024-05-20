@@ -1,26 +1,17 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { StorageItem } from "../model/ElectronicItem";
 import {
-  Button,
   Collapse,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  FormControl,
   IconButton,
-  InputLabel,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
   ListSubheader,
-  Select,
   TextField,
 } from "@mui/material";
-import { ExpandLess, ExpandMore, StarBorder } from "@mui/icons-material";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
 import AllInboxIcon from "@mui/icons-material/AllInbox";
 import AddIcon from "@mui/icons-material/Add";

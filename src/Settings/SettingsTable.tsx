@@ -4,7 +4,6 @@ import {
   ListItemIcon,
   ListItemText,
   ListSubheader,
-  Switch,
   TextField,
 } from "@mui/material";
 import React, { useState } from "react";

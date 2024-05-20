@@ -1,24 +1,8 @@
-import React, { useEffect, useState } from "react";
 import Papa from "papaparse";
-import { Button, IconButton, Input, styled } from "@mui/material";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { IconButton } from "@mui/material";
 import { ElectronicItem, StorageItem } from "../model/ElectronicItem";
-import { camelCase } from "change-case";
-import { useIndexedDB } from "react-indexed-db-hook";
 import { CloudDownload } from "@mui/icons-material";
 import { Pages } from "../pages";
-
-const VisuallyHiddenInput = styled("input")({
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
-  height: 1,
-  overflow: "hidden",
-  position: "absolute",
-  bottom: 0,
-  left: 0,
-  whiteSpace: "nowrap",
-  width: 1,
-});
 
 function exportCsv(getAll: () => Promise<ElectronicItem[]>) {
   console.log("exporting");

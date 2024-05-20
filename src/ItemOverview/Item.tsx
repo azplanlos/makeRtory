@@ -1,18 +1,15 @@
-import React, { InputHTMLAttributes, Ref, useState } from "react";
+import { useState } from "react";
 import { ElectronicItem, StorageItem } from "../model/ElectronicItem";
 import {
   TableRow,
   TableCell,
   Button,
-  Input,
   TextField,
-  InputAdornment,
   Select,
-  Menu,
   MenuItem,
   IconButton,
 } from "@mui/material";
-import { PropaneSharp, TextSnippet } from "@mui/icons-material";
+import { TextSnippet } from "@mui/icons-material";
 import StorageComponent from "../model/StorageComponent";
 import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -129,7 +126,7 @@ export default function ItemRowOverview(item: ElectronicItemProps) {
     </IconButton>
   );
   const storage =
-    item.item?.storage != undefined ? (
+    item.item?.storage !== undefined ? (
       <StorageComponent storage={item.item?.storage} />
     ) : (
       ""

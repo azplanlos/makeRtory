@@ -1,4 +1,3 @@
-import * as React from "react";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -8,21 +7,16 @@ import Typography from "@mui/material/Typography";
 import InputBase from "@mui/material/InputBase";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import ImportCsv, { ImportCsvProps } from "./database/ImportCsv";
 import ExportCsv from "./database/ExportCsv";
-import AddIcon from "@mui/icons-material/Add";
 import {
-  Button,
-  Drawer,
-  Icon,
   ListItemIcon,
   ListItemText,
   Menu,
   MenuItem,
   MenuList,
 } from "@mui/material";
-import { Add, ContentCut } from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
 import { useState } from "react";
 import ListIcon from "@mui/icons-material/List";
 import StorageIcon from "@mui/icons-material/Storage";

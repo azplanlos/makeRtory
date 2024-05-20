@@ -39,7 +39,7 @@ export default function ItemOverview(props: ItemOverviewProps) {
     getAll().then((partsFromDB) => {
       return props.setParts(partsFromDB);
     });
-  }, [getAll, props.setParts]);
+  }, [getAll, props.setParts, props]);
 
   const deleteItem = (item: ElectronicItem) => {
     if (item.partNumber) {

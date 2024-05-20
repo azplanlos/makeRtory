@@ -1,7 +1,6 @@
 import QRCode from "react-qr-code";
 import { StorageItem } from "./ElectronicItem";
-import React from "react";
-import { Grid, Paper, Stack } from "@mui/material";
+import { Grid } from "@mui/material";
 
 type StorageProps = Readonly<{ storage: StorageItem }>;
 

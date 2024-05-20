@@ -1,27 +1,14 @@
-import React, { useEffect, useState } from "react";
-import logo from "./logo.svg";
+import { useEffect, useState } from "react";
 import "./App.css";
-import ItemRowOverview from "./ItemOverview/Item";
 import { ElectronicItem, StorageItem } from "./model/ElectronicItem";
 import {
-  Card,
   CssBaseline,
-  Grid,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   ThemeProvider,
   createTheme,
 } from "@mui/material";
 import { DBConfig } from "./database/DBSchemaConfig";
 import { initDB, useIndexedDB } from "react-indexed-db-hook";
-import ImportCsv from "./database/ImportCsv";
 import Menubar from "./Menubar";
-import ItemDetailCard from "./ItemOverview/ItemDetailCard";
 import ItemOverview from "./ItemOverview/ItemOverview";
 import { Pages } from "./pages";
 import SettingsTable from "./Settings/SettingsTable";
