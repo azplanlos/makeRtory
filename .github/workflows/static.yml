@@ -2,9 +2,9 @@ name: CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   build:
@@ -30,7 +30,7 @@ jobs:
     - name: Build
       run: npm run build
 
-    - name: Deploy
+    - name: Deploy github pages
       run: |
         git config --global user.name $user_name
         git config --global user.email $user_email
