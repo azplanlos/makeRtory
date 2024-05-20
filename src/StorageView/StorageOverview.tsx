@@ -100,9 +100,7 @@ export default function StorageOverview(props: StorageOverviewProps) {
               <ListItem
                 sx={{ pl: 4 }}
                 secondaryAction={
-                  <IconButton
-                    onClick={() => setDeleteItem(fach)}
-                  >
+                  <IconButton onClick={() => setDeleteItem(fach)}>
                     <DeleteIcon />
                   </IconButton>
                 }
@@ -194,7 +192,10 @@ export default function StorageOverview(props: StorageOverviewProps) {
       />
       <DeleteDialog
         item={deleteItem}
-        itemName={`${deleteItem?.boxName} (Fach ${deleteItem?.row}/${deleteItem?.col})` || ""}
+        itemName={
+          `${deleteItem?.boxName} (Fach ${deleteItem?.row}/${deleteItem?.col})` ||
+          ""
+        }
         open={deleteItem !== null}
         onClose={() => setDeleteItem(null)}
         onDelete={(item: NestedStorageItem) => {
@@ -210,8 +211,13 @@ export default function StorageOverview(props: StorageOverviewProps) {
         }}
       >
         Dies wird alle Elemente dieses Fachs in den 'unbekannten Lagerort'
-        verschieben{props.storageItems.filter(item => item.box === deleteItem?.box).length === 1 ? ` und die Box '${deleteItem?.boxName}' ebenfalls löschen, da diese kein weiteres
-        Fach enthält` : ''}.
+        verschieben
+        {props.storageItems.filter((item) => item.box === deleteItem?.box)
+          .length === 1
+          ? ` und die Box '${deleteItem?.boxName}' ebenfalls löschen, da diese kein weiteres
+        Fach enthält`
+          : ""}
+        .
       </DeleteDialog>
     </>
   );

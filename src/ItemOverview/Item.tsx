@@ -45,8 +45,12 @@ export default function ItemRowOverview(item: ElectronicItemProps) {
   );
   const [stock, setStock] = useState(item.item.stock || 0);
   const [stor, setStor] = useState(
-    item.item.storage ||
-      ({ box: 1, shortName: "Box", row: 1, col: 1 } as StorageItem),
+    item.storages.find(
+      (strg) =>
+        strg.box === item.item.storage?.box &&
+        strg.row === item.item.storage.row &&
+        strg.col === item.item.storage.col,
+    ) || unassignedStorage,
   );
   const [price, setPrice] = useState(item.item.price || 0);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
