@@ -20,6 +20,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import { useIndexedDB } from "react-indexed-db-hook";
 import DeleteDialog from "../ItemOverview/DeleteDialog";
+import React from "react";
 
 export type NestedStorageItem = StorageItem & {
   children: NestedStorageItem[];
@@ -63,7 +64,7 @@ export default function StorageOverview(props: StorageOverviewProps) {
 
   const itemEntry = (item: NestedStorageItem) => {
     return (
-      <>
+      <React.Fragment key={`item-${item.box}.${item.row}.${item.col}`}>
         <ListItemButton
           onClick={() => {
             if (openEntries.find((it) => it === item.box)) {
@@ -85,17 +86,22 @@ export default function StorageOverview(props: StorageOverviewProps) {
             }
           />
           {!openEntries.find((it) => it === item.box) ? (
-            <ExpandLess />
-          ) : (
             <ExpandMore />
+          ) : (
+            <ExpandLess />
           )}
         </ListItemButton>
         <Collapse
-          in={openEntries.find((it) => it === item.box) === undefined}
+          in={openEntries.find((it) => it === item.box) !== undefined}
           timeout="auto"
           unmountOnExit
+          key={`collapse-${item.box}.${item.row}.${item.col}`}
         >
-          <List component="div" disablePadding>
+          <List
+            component="div"
+            disablePadding
+            key={`sublist-${item.box}.${item.row}.${item.col}`}
+          >
             {item.children.map((fach) => (
               <ListItem
                 sx={{ pl: 4 }}
@@ -104,6 +110,7 @@ export default function StorageOverview(props: StorageOverviewProps) {
                     <DeleteIcon />
                   </IconButton>
                 }
+                key={`${fach.box}.${fach.row}.${fach.col}`}
               >
                 <ListItemButton>
                   <ListItemIcon>
@@ -115,7 +122,11 @@ export default function StorageOverview(props: StorageOverviewProps) {
                 </ListItemButton>
               </ListItem>
             ))}
-            <ListItemButton sx={{ pl: 4 }} onClick={() => setAddEntry(item)}>
+            <ListItemButton
+              sx={{ pl: 4 }}
+              onClick={() => setAddEntry(item)}
+              key={`add-${item.box}.${item.row}.${item.col}`}
+            >
               <ListItemIcon>
                 <AddIcon />
               </ListItemIcon>
@@ -123,7 +134,7 @@ export default function StorageOverview(props: StorageOverviewProps) {
             </ListItemButton>
           </List>
         </Collapse>
-      </>
+      </React.Fragment>
     );
   };
 
@@ -136,7 +147,11 @@ export default function StorageOverview(props: StorageOverviewProps) {
         component="nav"
         aria-labelledby="nested-list-subheader"
         subheader={
-          <ListSubheader component="div" id="nested-list-subheader">
+          <ListSubheader
+            component="div"
+            id="nested-list-subheader"
+            key="subheader"
+          >
             Lagerplätze
           </ListSubheader>
         }
