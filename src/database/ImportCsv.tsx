@@ -36,9 +36,10 @@ function parseCsv(
   getAll: () => Promise<ElectronicItem[]>,
   setAlertOpen: (alert: boolean) => void,
 ) {
-  if (files !== null && files.length === 2) {
+  if (files !== null) {
     [...files].forEach((file) => {
       console.log("parsing " + file.name);
+      const storages: StorageItem[] = [];
       Papa.parse<CsvElectronicItem, File>(files[0], {
         header: true,
         dynamicTyping: true,
@@ -47,25 +48,31 @@ function parseCsv(
           return camelCase(header);
         },
         step: (result, parser) => {
-          parser.pause();
           if (
             result.data.partNumber !== undefined &&
-            result.data.partNumber !== null
+            result.data.partNumber !== null &&
+            result.data.partNumber.length > 0
           ) {
+            const [box, row, col] = result.data.storage
+              ?.split(".", 3)
+              .map((str) => parseInt(str)) || [-1, -1, -1];
+            const storage = storages.filter(
+              (stor) =>
+                stor.box === box && stor.row === row && stor.col === col,
+            )[0];
             add({
               partNumber: result.data.partNumber,
               title: result.data.title,
               manufactorer: result.data.manufactorer,
               price: result.data.price,
               stock: result.data.stock,
-              storage: result.data.storage,
+              storage: storage,
               datasheetUrl: result.data.datasheetUrl,
               packageFormat: result.data.packageFormat,
               value: result.data.value,
             }).then(
               (event) => {
-                console.log("ID Generated: ", event);
-                parser.resume();
+                console.log("ID Generated for ElectronicItem: ", event);
               },
               (error) => {
                 console.log(error);
@@ -73,23 +80,25 @@ function parseCsv(
               },
             );
             console.log(result.data);
-          } else if (result.data.box !== undefined) {
-            addStorage({
+          } else if (result.data.box !== undefined && result.data.box > 0) {
+            const storage = {
               box: result.data.box,
               boxName: result.data.boxName,
               shortName: result.data.shortName,
               row: result.data.row,
               col: result.data.col,
-            }).then(
+            } as StorageItem;
+            storages.push(storage);
+            addStorage(storage).then(
               (event) => {
-                console.log("ID Generated: ", event);
-                parser.resume();
+                console.log("ID Generated for Storage: ", event);
               },
               (error) => {
                 console.log(error);
                 parser.abort();
               },
             );
+            console.log(result.data);
           } else {
             console.warn(
               "unsupported line input: " + JSON.stringify(result.data),
@@ -133,7 +142,6 @@ export default function ImportCsv(props: ImportCsvProps) {
         <CloudUploadIcon />
         <VisuallyHiddenInput
           type="file"
-          multiple
           accept=".csv"
           onChange={(e) => {
             clear();

@@ -16,6 +16,7 @@ export type ElectronicItem = {
 };
 
 export type StorageItem = {
+  id?: number;
   box: number;
   boxName?: string;
   shortName: string;
@@ -26,5 +27,9 @@ export type StorageItem = {
 export function isElectronicItem(
   item: ElectronicItem | StorageItem,
 ): item is ElectronicItem {
-  return true;
+  return (
+    "partNumber" in item &&
+    item.partNumber !== undefined &&
+    item.partNumber.length > 0
+  );
 }

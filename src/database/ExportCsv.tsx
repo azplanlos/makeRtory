@@ -6,7 +6,6 @@ import {
   isElectronicItem,
 } from "../model/ElectronicItem";
 import { CloudDownload } from "@mui/icons-material";
-import { Pages } from "../pages";
 
 export type CsvElectronicItem = ElectronicItem &
   StorageItem & {
@@ -36,8 +35,9 @@ function exportCsv(
                 storage: `${part.storage?.box}.${part.storage?.row}.${part.storage?.col}`,
               } as CsvElectronicItem;
             } else {
+              const { id, ...itemStoreData } = item as StorageItem;
               return {
-                ...item,
+                ...itemStoreData,
               } as CsvElectronicItem;
             }
           })
@@ -45,11 +45,14 @@ function exportCsv(
             (a.partNumber ?? "").localeCompare(b.partNumber ?? ""),
           ),
         {
+          quotes: true,
           header: true,
           skipEmptyLines: true,
           columns: [
             ...new Set(
-              [...storageData, ...itemData].flatMap((it) => Object.keys(it)),
+              [...storageData, ...itemData]
+                .flatMap((it) => Object.keys(it))
+                .filter((it) => it !== "id"),
             ),
           ],
         },
