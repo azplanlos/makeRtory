@@ -118,7 +118,6 @@ export default function Menubar(props: menubarProps) {
             <ExportCsv
               getAll={props.importCsv.getAll}
               getAllStorage={props.importCsv.getAllStorage}
-              exportType={props.currentPage}
               disabled={props.currentPage === Pages.SETTINGS}
             />
             <ImportCsv

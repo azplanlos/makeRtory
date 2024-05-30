@@ -1,76 +1,79 @@
 import Papa from "papaparse";
 import { IconButton } from "@mui/material";
-import { ElectronicItem, StorageItem } from "../model/ElectronicItem";
+import {
+  ElectronicItem,
+  StorageItem,
+  isElectronicItem,
+} from "../model/ElectronicItem";
 import { CloudDownload } from "@mui/icons-material";
 import { Pages } from "../pages";
 
-type CsvElectronicItem = ElectronicItem & {
-  storage?: string;
-};
+export type CsvElectronicItem = ElectronicItem &
+  StorageItem & {
+    storage?: string;
+    box?: number;
+    shortName?: string;
+    row?: number;
+    col?: number;
+  };
 
-function exportCsv(getAll: () => Promise<ElectronicItem[]>) {
+function exportCsv(
+  getAll: () => Promise<ElectronicItem[]>,
+  getAllStorage: () => Promise<StorageItem[]>,
+) {
   console.log("exporting");
-  getAll().then((data) => {
-    const text = Papa.unparse<CsvElectronicItem>(
-      data
-        .map((item) => {
-          const { storage, image, ...itemStoreData } = item as ElectronicItem;
-          return {
-            ...itemStoreData,
-            storage: `${item.storage?.box}.${item.storage?.row}.${item.storage?.col}`,
-          } as CsvElectronicItem;
-        })
-        .sort((a, b) => (a.partNumber ?? "").localeCompare(b.partNumber ?? "")),
-      {
-        header: true,
-        skipEmptyLines: true,
-      },
-    );
-    const file = new Blob([text], { type: "text/plain" });
-    const element = document.createElement("a");
-    element.href = URL.createObjectURL(file);
-    element.download = "makeRtory.csv";
-    document.body.appendChild(element); // Required for this to work in FireFox
-    element.click();
-  });
-}
-
-function exportStorageCsv(getAll: () => Promise<StorageItem[]>) {
-  console.log("exporting storage");
-  getAll().then((data) => {
-    const text = Papa.unparse<StorageItem>(
-      data.sort((a, b) => (a.boxName ?? "").localeCompare(b.boxName ?? "")),
-      {
-        header: true,
-        skipEmptyLines: true,
-      },
-    );
-    const file = new Blob([text], { type: "text/plain" });
-    const element = document.createElement("a");
-    element.href = URL.createObjectURL(file);
-    element.download = "makeRtoryStorage.csv";
-    document.body.appendChild(element); // Required for this to work in FireFox
-    element.click();
+  getAll().then((itemData) => {
+    getAllStorage().then((storageData) => {
+      const text = Papa.unparse<CsvElectronicItem>(
+        [...storageData, ...itemData]
+          .map((item) => {
+            if (isElectronicItem(item)) {
+              const { storage, image, ...itemStoreData } =
+                item as ElectronicItem;
+              const part = item as ElectronicItem;
+              return {
+                ...itemStoreData,
+                storage: `${part.storage?.box}.${part.storage?.row}.${part.storage?.col}`,
+              } as CsvElectronicItem;
+            } else {
+              return {
+                ...item,
+              } as CsvElectronicItem;
+            }
+          })
+          .sort((a, b) =>
+            (a.partNumber ?? "").localeCompare(b.partNumber ?? ""),
+          ),
+        {
+          header: true,
+          skipEmptyLines: true,
+          columns: [
+            ...new Set(
+              [...storageData, ...itemData].flatMap((it) => Object.keys(it)),
+            ),
+          ],
+        },
+      );
+      const file = new Blob([text], { type: "text/plain" });
+      const element = document.createElement("a");
+      element.href = URL.createObjectURL(file);
+      element.download = "makeRtory.csv";
+      document.body.appendChild(element); // Required for this to work in FireFox
+      element.click();
+    });
   });
 }
 
 export type ExportCsvProps = {
   getAll: () => Promise<ElectronicItem[]>;
   getAllStorage: () => Promise<StorageItem[]>;
-  exportType: Pages;
   disabled: boolean;
 };
 
 export default function ExportCsv(props: ExportCsvProps) {
   return (
     <IconButton
-      onClick={() => {
-        if (props.exportType === Pages.STORAGE) {
-          exportStorageCsv(props.getAllStorage);
-        } else {
-          exportCsv(props.getAll);
-        }
-      }}
+      onClick={() => exportCsv(props.getAll, props.getAllStorage)}
       disabled={props.disabled}
     >
       <CloudDownload />

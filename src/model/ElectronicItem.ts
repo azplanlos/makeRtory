@@ -22,3 +22,9 @@ export type StorageItem = {
   row: number;
   col: number;
 };
+
+export function isElectronicItem(
+  item: ElectronicItem | StorageItem,
+): item is ElectronicItem {
+  return true;
+}
