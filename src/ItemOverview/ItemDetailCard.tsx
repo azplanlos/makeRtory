@@ -178,14 +178,14 @@ export default function ItemDetailCard(props: ItemDetailProps) {
   const printRef = React.useRef<HTMLImageElement>(null);
 
   const [blobUrl, setBlobUrl] = useState<string | undefined>(
-    "/image-solid.png",
+    "image-solid.png",
   );
   React.useEffect(() => {
     setBlobUrl(
       item?.image !== undefined && item?.image?.size > 0
         ? URL.createObjectURL(item.image)
         : item?.imageUrl === undefined
-          ? "/image-solid.png"
+          ? "image-solid.png"
           : undefined,
     );
   }, [open, props.item?.imageUrl, item?.image, item?.imageUrl]);
