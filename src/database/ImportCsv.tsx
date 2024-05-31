@@ -70,7 +70,16 @@ function parseCsv(
               datasheetUrl: result.data.datasheetUrl,
               packageFormat: result.data.packageFormat,
               value: result.data.value,
-              tags: result.data.tags?.split(',')
+              tags: result.data.tags?.split(","),
+              imageUrl: result.data.imageUrl,
+              attributes: new Map(
+                (result.data.attributes || "")
+                  .split("|")
+                  .map((keyValue) => [
+                    keyValue.split("=")[0],
+                    keyValue.split("=")[1],
+                  ]),
+              ),
             } as ElectronicItem).then(
               (event) => {
                 console.log("ID Generated for ElectronicItem: ", event);
@@ -139,7 +148,11 @@ export default function ImportCsv(props: ImportCsvProps) {
 
   return (
     <>
-      <IconButton onClick={() => fileUp?.click()} disabled={props.disabled} color="inherit">
+      <IconButton
+        onClick={() => fileUp?.click()}
+        disabled={props.disabled}
+        color="inherit"
+      >
         <CloudUploadIcon />
         <VisuallyHiddenInput
           type="file"

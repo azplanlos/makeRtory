@@ -9,6 +9,7 @@ import { CloudDownload } from "@mui/icons-material";
 
 export type CsvElectronicItem = ElectronicItem &
   StorageItem & {
+    attributes?: string;
     storage?: string;
     tags?: string;
     box?: number;
@@ -28,12 +29,15 @@ function exportCsv(
         [...storageData, ...itemData]
           .map((item) => {
             if (isElectronicItem(item)) {
-              const { tags, storage, image, ...itemStoreData } =
+              const { attributes, tags, storage, image, ...itemStoreData } =
                 item as ElectronicItem;
               const part = item as ElectronicItem;
               return {
                 ...itemStoreData,
-                tags: tags?.join(','),
+                attributes: [...(attributes?.entries() || [])]
+                  .map((entry) => `${entry[0]}=${entry[1]}`)
+                  .join("|"),
+                tags: tags?.join(","),
                 storage: `${part.storage?.box}.${part.storage?.row}.${part.storage?.col}`,
               } as CsvElectronicItem;
             } else {

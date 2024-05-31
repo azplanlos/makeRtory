@@ -114,20 +114,35 @@ export default function Menubar(props: menubarProps) {
             >
               makeRtory
             </Typography>
-            <Box display='flex' flexGrow={1} marginLeft="2%">
-            {props.currentPage === Pages.OVERVIEW && <FormControl><Select color="primary" value={filter} onChange={(e) => {
-              setFilter(e.target.value);
-              props.applyFilter(e.target.value !== '-all-' ? e.target.value : undefined);
-              setTimeout(() => {
-                (document?.activeElement as HTMLInputElement)?.blur();
-              }, 0);
-            }} style={{color: 'white'}} variant="standard">
-              <MenuItem value="-all-" key="all">Alle</MenuItem>
-              { props.categories.map(cat => 
-                <MenuItem value={cat} key={cat}>{cat}</MenuItem>
-              ) }
-            </Select></FormControl>
-            }
+            <Box display="flex" flexGrow={1} marginLeft="2%">
+              {props.currentPage === Pages.OVERVIEW && (
+                <FormControl>
+                  <Select
+                    color="primary"
+                    value={filter}
+                    onChange={(e) => {
+                      setFilter(e.target.value);
+                      props.applyFilter(
+                        e.target.value !== "-all-" ? e.target.value : undefined,
+                      );
+                      setTimeout(() => {
+                        (document?.activeElement as HTMLInputElement)?.blur();
+                      }, 0);
+                    }}
+                    style={{ color: "white" }}
+                    variant="standard"
+                  >
+                    <MenuItem value="-all-" key="all">
+                      Alle
+                    </MenuItem>
+                    {props.categories.map((cat) => (
+                      <MenuItem value={cat} key={cat}>
+                        {cat}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
             </Box>
             <IconButton
               onClick={props.addItem}

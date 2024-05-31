@@ -127,17 +127,17 @@ export default function ItemOverview(props: ItemOverviewProps) {
               {props.parts
                 ?.filter(
                   (part) =>
-                    ((part.partNumber
+                    (part.partNumber
                       ?.toUpperCase()
                       ?.includes(props.searchString.toUpperCase()) ||
-                    part.title
-                      ?.toUpperCase()
-                      ?.includes(props.searchString.toUpperCase()) ||
-                    part.manufactorer
-                      ?.toUpperCase()
-                      ?.includes(props.searchString.toUpperCase())) && (
-                        props.filter === undefined || part.tags?.includes(props.filter)
-                      ))
+                      part.title
+                        ?.toUpperCase()
+                        ?.includes(props.searchString.toUpperCase()) ||
+                      part.manufactorer
+                        ?.toUpperCase()
+                        ?.includes(props.searchString.toUpperCase())) &&
+                    (props.filter === undefined ||
+                      part.tags?.includes(props.filter)),
                 )
                 ?.map((part) => (
                   <ItemRowOverview

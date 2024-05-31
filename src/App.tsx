@@ -13,7 +13,7 @@ import StorageOverview from "./StorageView/StorageOverview";
 initDB(DBConfig);
 
 function filterCategories(items: ElectronicItem[]): string[] {
-  return [...new Set(items.flatMap(it => it.tags || []))].sort();
+  return [...new Set(items.flatMap((it) => it.tags || []))].sort();
 }
 
 function App() {
@@ -23,16 +23,24 @@ function App() {
   const [selectedItem, setSelectedItem] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<Pages>(Pages.OVERVIEW);
   const [storages, setStorages] = useState<StorageItem[]>([]);
-  const [dark, setDark] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const [dark, setDark] = useState(
+    window.matchMedia("(prefers-color-scheme: dark)").matches,
+  );
   const [theme, setTheme] = useState<Theme>(createTheme());
   const [categories, setCategories] = useState<string[]>([]);
   const [filter, setFilter] = useState<string | undefined>(undefined);
 
-  useEffect(() => setTheme(createTheme({
-    palette: {
-      mode: dark ? "dark" : "light",
-    },
-  })), [dark]);
+  useEffect(
+    () =>
+      setTheme(
+        createTheme({
+          palette: {
+            mode: dark ? "dark" : "light",
+          },
+        }),
+      ),
+    [dark],
+  );
 
   const { getAll } = useIndexedDB("parts");
   const getAllStorages = useIndexedDB("storage").getAll;
@@ -80,10 +88,9 @@ function App() {
           <ItemOverview
             parts={parts}
             setParts={(prts) => {
-                setParts(prts);
-                setCategories(filterCategories(prts || []));
-              }
-            }
+              setParts(prts);
+              setCategories(filterCategories(prts || []));
+            }}
             selectedItem={selectedItem}
             setSelectedItem={setSelectedItem}
             searchString={searchString}
@@ -96,7 +103,9 @@ function App() {
         ) : (
           <></>
         )}
-        {currentPage === Pages.SETTINGS && <SettingsTable setDark={setDark} dark={dark} />}
+        {currentPage === Pages.SETTINGS && (
+          <SettingsTable setDark={setDark} dark={dark} />
+        )}
         {currentPage === Pages.STORAGE && (
           <StorageOverview
             storageItems={storages}

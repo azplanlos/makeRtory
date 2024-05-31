@@ -111,10 +111,9 @@ function AddTagDialog(props: AddTagDialogProps) {
   const [newCategory, setNewCategory] = useState<string | undefined>(undefined);
 
   React.useEffect(() => {
-    setNewCategory('');
-    setCategory('');
-  }, [open])
-
+    setNewCategory("");
+    setCategory("");
+  }, [open]);
 
   const handleClose = () => {
     onClose("");
@@ -124,7 +123,10 @@ function AddTagDialog(props: AddTagDialogProps) {
     <Dialog onClose={handleClose} open={open}>
       <DialogTitle>Kategorie hinzufügen</DialogTitle>
       <DialogContent>
-        <DialogContentText style={{marginBottom: '2%'}}>Bitte wähle eine neue Kategorie aus oder gib den Namen einer neuen Kategorie ein.</DialogContentText>
+        <DialogContentText style={{ marginBottom: "2%" }}>
+          Bitte wähle eine neue Kategorie aus oder gib den Namen einer neuen
+          Kategorie ein.
+        </DialogContentText>
         <FormControl fullWidth>
           <InputLabel id="cat-select-label">Kategorie</InputLabel>
           <Select
@@ -135,12 +137,23 @@ function AddTagDialog(props: AddTagDialogProps) {
             onChange={(e) => setCategory(e.target.value)}
           >
             <MenuItem value="-new-">Neue Kategorie</MenuItem>
-            { props.categories.map((tag) => <MenuItem value={tag} key={tag}>{tag}</MenuItem>)}
+            {props.categories.map((tag) => (
+              <MenuItem value={tag} key={tag}>
+                {tag}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
-        {category === '-new-' && <FormControl fullWidth>
-            <TextField label="Neue Kategorie" style={{marginTop: '2%'}} onChange={(e) => setNewCategory(e.target.value)} value={newCategory}></TextField>
-          </FormControl>}
+        {category === "-new-" && (
+          <FormControl fullWidth>
+            <TextField
+              label="Neue Kategorie"
+              style={{ marginTop: "2%" }}
+              onChange={(e) => setNewCategory(e.target.value)}
+              value={newCategory}
+            ></TextField>
+          </FormControl>
+        )}
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Abbrechen</Button>
@@ -148,11 +161,24 @@ function AddTagDialog(props: AddTagDialogProps) {
           onClick={() => {
             handleClose();
             if (props.item) {
-              props.onUpdate({...props.item, tags: [...props.item.tags || [] as string[], (category !== '-new-' ? (category || "") : (newCategory || ""))]})
-              console.log("added category " + (category !== '-new-' ? category : newCategory))
-            } 
+              props.onUpdate({
+                ...props.item,
+                tags: [
+                  ...(props.item.tags || ([] as string[])),
+                  category !== "-new-" ? category || "" : newCategory || "",
+                ],
+              });
+              console.log(
+                "added category " +
+                  (category !== "-new-" ? category : newCategory),
+              );
+            }
           }}
-          disabled={!category || category?.length <= 0 || (category === '-new-' && (!newCategory || newCategory.length <= 0))}
+          disabled={
+            !category ||
+            category?.length <= 0 ||
+            (category === "-new-" && (!newCategory || newCategory.length <= 0))
+          }
           autoFocus
         >
           Hinzufügen
@@ -177,9 +203,7 @@ export default function ItemDetailCard(props: ItemDetailProps) {
   const setItem = props.setItem;
   const printRef = React.useRef<HTMLImageElement>(null);
 
-  const [blobUrl, setBlobUrl] = useState<string | undefined>(
-    "image-solid.png",
-  );
+  const [blobUrl, setBlobUrl] = useState<string | undefined>("image-solid.png");
   React.useEffect(() => {
     setBlobUrl(
       item?.image !== undefined && item?.image?.size > 0
@@ -209,91 +233,106 @@ export default function ItemDetailCard(props: ItemDetailProps) {
         strg.col === props.item.storage.col,
     ) || unassignedStorage;
 
-  return <>
-   { item && (
-    <AutoSizer>
-      {(cardSize: Size) => (
-        <Card sx={{ height: cardSize.height, width: cardSize.width }}>
-          <CardHeader
-            avatar={<Avatar aria-label="recipe">{storage?.shortName}</Avatar>}
-            action={
-              <>
-                <IconButton onClick={handleClickOpen}>
-                  <MoreIcon />
-                </IconButton>
-                <IconButton aria-label="print label">
-                  <Print />
-                </IconButton>
-                <UpdateAttributesFromDigikey
-                  item={item}
-                  onUpdate={(newItem: ElectronicItem) => updateItem(newItem)}
-                />
-                <IconButton
-                  aria-label="settings"
-                  onClick={() => props.cardClose()}
-                >
-                  <CloseIcon />
-                </IconButton>
-              </>
-            }
-            title={item?.title ?? item?.partNumber}
-            subheader={item?.manufactorer}
-          />
-          <CardMedia
-            component="img"
-            sx={{ height: "30%" }}
-            image={
-              blobUrl ??
-              "https://corsproxy.io/?" +
-                encodeURI(item?.imageUrl ?? "https://placehold.co/300x300")
-            }
-            title={item?.title ?? item?.partNumber}
-            onLoad={(event) => saveImage(printRef, updateItem, item)}
-            ref={printRef}
-            crossOrigin="anonymous"
-          />
-          <CardContent style={{ height: "40%" }}>
-            <Stack direction="row" spacing={1}>
-              {item?.tags?.map((tag) => (
-                <Chip
-                  label={tag}
-                  onDelete={(elem) => {
-                    item.tags = item.tags?.filter((tg) => tg !== tag);
-                    updateItem(item);
-                  }}
-                  key={`cat-${tag}`}
-                />
-              ))}
-            </Stack>
+  return (
+    <>
+      {item && (
+        <AutoSizer>
+          {(cardSize: Size) => (
+            <Card sx={{ height: cardSize.height, width: cardSize.width }}>
+              <CardHeader
+                avatar={
+                  <Avatar aria-label="recipe">{storage?.shortName}</Avatar>
+                }
+                action={
+                  <>
+                    <IconButton onClick={handleClickOpen}>
+                      <MoreIcon />
+                    </IconButton>
+                    <IconButton aria-label="print label">
+                      <Print />
+                    </IconButton>
+                    <UpdateAttributesFromDigikey
+                      item={item}
+                      onUpdate={(newItem: ElectronicItem) =>
+                        updateItem(newItem)
+                      }
+                    />
+                    <IconButton
+                      aria-label="settings"
+                      onClick={() => props.cardClose()}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </>
+                }
+                title={item?.title ?? item?.partNumber}
+                titleTypographyProps={{
+                  variant: "h5",
+                  style: { fontWeight: "bolder" },
+                }}
+                subheader={item?.manufactorer}
+              />
+              <CardMedia
+                component="img"
+                sx={{ height: "30%" }}
+                image={
+                  blobUrl ??
+                  "https://corsproxy.io/?" +
+                    encodeURI(item?.imageUrl ?? "https://placehold.co/300x300")
+                }
+                title={item?.title ?? item?.partNumber}
+                onLoad={(event) => saveImage(printRef, updateItem, item)}
+                ref={printRef}
+                crossOrigin="anonymous"
+              />
+              <CardContent style={{ height: "40%" }}>
+                <Stack direction="row" spacing={1}>
+                  {item?.tags?.map((tag) => (
+                    <Chip
+                      label={tag}
+                      onDelete={(elem) => {
+                        item.tags = item.tags?.filter((tg) => tg !== tag);
+                        updateItem(item);
+                      }}
+                      key={`cat-${tag}`}
+                    />
+                  ))}
+                </Stack>
 
-            <AddTagDialog open={open} onClose={handleClose} onUpdate={props.setItem} item={props.item} categories={props.categories} />
-            <StockCounter
-              count={item?.stock || 0}
-              setCount={(count) => {
-                console.log("new count: " + count);
-                item!!.stock = count;
-                updateItem(item!!);
-              }}
-            />
-            {item?.description}
-            <AutoSizer>
-              {(size: Size) => (
-                <FixedSizeList
-                  itemData={item?.attributes}
-                  itemSize={50}
-                  height={size.height}
-                  itemCount={item?.attributes?.size || 0}
-                  width={size.width}
-                >
-                  {Row}
-                </FixedSizeList>
-              )}
-            </AutoSizer>
-          </CardContent>
-        </Card>
+                <AddTagDialog
+                  open={open}
+                  onClose={handleClose}
+                  onUpdate={props.setItem}
+                  item={props.item}
+                  categories={props.categories}
+                />
+                <StockCounter
+                  count={item?.stock || 0}
+                  setCount={(count) => {
+                    console.log("new count: " + count);
+                    item!!.stock = count;
+                    updateItem(item!!);
+                  }}
+                />
+                {item?.description}
+                <AutoSizer>
+                  {(size: Size) => (
+                    <FixedSizeList
+                      itemData={item?.attributes}
+                      itemSize={50}
+                      height={size.height}
+                      itemCount={item?.attributes?.size || 0}
+                      width={size.width}
+                    >
+                      {Row}
+                    </FixedSizeList>
+                  )}
+                </AutoSizer>
+              </CardContent>
+            </Card>
+          )}
+        </AutoSizer>
       )}
-    </AutoSizer>
-  )
-}
-</>;
+    </>
+  );
 }

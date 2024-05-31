@@ -10,12 +10,12 @@ import {
 import React, { useState } from "react";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import PasswordIcon from "@mui/icons-material/Password";
-import DarkModeIcon from '@mui/icons-material/DarkMode';
+import DarkModeIcon from "@mui/icons-material/DarkMode";
 
 type SettingsTableProps = {
   setDark: (dark: boolean) => void;
   dark: boolean;
-}
+};
 
 export default function SettingsTable(props: SettingsTableProps) {
   const [clientId, setClientId] = useState(
@@ -64,10 +64,13 @@ export default function SettingsTable(props: SettingsTableProps) {
       <ListSubheader>Anzeige</ListSubheader>
       <ListItem>
         <ListItemIcon>
-            <DarkModeIcon />
-          </ListItemIcon>
-          <ListItemText id="dark" primary="Dunkler Modus" />
-          <Switch checked={props.dark} onChange={(e) => props.setDark(e.target.checked)} />
+          <DarkModeIcon />
+        </ListItemIcon>
+        <ListItemText id="dark" primary="Dunkler Modus" />
+        <Switch
+          checked={props.dark}
+          onChange={(e) => props.setDark(e.target.checked)}
+        />
       </ListItem>
     </List>
   );
