@@ -64,7 +64,9 @@ export default function ItemRowOverview(item: ElectronicItemProps) {
   const button = item.item?.datasheetUrl ? (
     <Button
       variant="contained"
-      onClick={(e) => (window.location.href = item.item?.datasheetUrl || "")}
+      onClick={(e) =>
+        window?.open(item.item?.datasheetUrl || "", "_blank")?.focus()
+      }
       startIcon={<TextSnippet />}
     >
       Datenblatt

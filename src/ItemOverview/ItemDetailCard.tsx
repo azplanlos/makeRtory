@@ -44,6 +44,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Print from "@mui/icons-material/Print";
 import { unassignedStorage } from "../model/StorageComponent";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 
 const FixedSizeList = _FixedSizeList as ComponentType<FixedSizeListProps>;
 
@@ -290,6 +291,17 @@ export default function ItemDetailCard(props: ItemDetailProps) {
                 }
                 action={
                   <>
+                    {item.datasheetUrl && item.datasheetUrl.length > 0 && (
+                      <IconButton
+                        onClick={() =>
+                          window
+                            ?.open(item.datasheetUrl || "", "_blank")
+                            ?.focus()
+                        }
+                      >
+                        <AttachFileIcon />
+                      </IconButton>
+                    )}
                     <IconButton onClick={handleClickOpen}>
                       <MoreIcon />
                     </IconButton>
