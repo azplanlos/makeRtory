@@ -6,15 +6,24 @@ import { ElectronicItem, StorageItem } from "../model/ElectronicItem";
 import {
   Avatar,
   Box,
+  Button,
   CardHeader,
   Chip,
   Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
   DialogTitle,
+  FormControl,
   Grid,
   IconButton,
+  InputLabel,
   ListItem,
   ListItemText,
+  MenuItem,
+  Select,
   Stack,
+  TextField,
 } from "@mui/material";
 import MoreIcon from "@mui/icons-material/More";
 import UpdateAttributesFromDigikey from "../UpdateAttributes";
@@ -39,6 +48,7 @@ export type ItemDetailProps = {
   setItem: (item: ElectronicItem) => void;
   cardClose: () => void;
   storages: StorageItem[];
+  categories: string[];
 };
 
 async function saveImage(
@@ -90,10 +100,21 @@ const Row: React.FC<ListChildComponentProps<Map<string, string>>> = ({
 export interface AddTagDialogProps {
   open: boolean;
   onClose: (value: string) => void;
+  onUpdate: (item: ElectronicItem) => void;
+  item: ElectronicItem | undefined;
+  categories: string[];
 }
 
 function AddTagDialog(props: AddTagDialogProps) {
   const { onClose, open } = props;
+  const [category, setCategory] = useState<string | undefined>(undefined);
+  const [newCategory, setNewCategory] = useState<string | undefined>(undefined);
+
+  React.useEffect(() => {
+    setNewCategory('');
+    setCategory('');
+  }, [open])
+
 
   const handleClose = () => {
     onClose("");
@@ -101,7 +122,42 @@ function AddTagDialog(props: AddTagDialogProps) {
 
   return (
     <Dialog onClose={handleClose} open={open}>
-      <DialogTitle>Neue Kategorie</DialogTitle>
+      <DialogTitle>Kategorie hinzufügen</DialogTitle>
+      <DialogContent>
+        <DialogContentText style={{marginBottom: '2%'}}>Bitte wähle eine neue Kategorie aus oder gib den Namen einer neuen Kategorie ein.</DialogContentText>
+        <FormControl fullWidth>
+          <InputLabel id="cat-select-label">Kategorie</InputLabel>
+          <Select
+            labelId="cat-select-label"
+            id="cat-select"
+            value={category}
+            label="Kategorie"
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            <MenuItem value="-new-">Neue Kategorie</MenuItem>
+            { props.categories.map((tag) => <MenuItem value={tag} key={tag}>{tag}</MenuItem>)}
+          </Select>
+        </FormControl>
+        {category === '-new-' && <FormControl fullWidth>
+            <TextField label="Neue Kategorie" style={{marginTop: '2%'}} onChange={(e) => setNewCategory(e.target.value)} value={newCategory}></TextField>
+          </FormControl>}
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose}>Abbrechen</Button>
+        <Button
+          onClick={() => {
+            handleClose();
+            if (props.item) {
+              props.onUpdate({...props.item, tags: [...props.item.tags || [] as string[], (category !== '-new-' ? (category || "") : (newCategory || ""))]})
+              console.log("added category " + (category !== '-new-' ? category : newCategory))
+            } 
+          }}
+          disabled={!category || category?.length <= 0 || (category === '-new-' && (!newCategory || newCategory.length <= 0))}
+          autoFocus
+        >
+          Hinzufügen
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 }
@@ -153,7 +209,8 @@ export default function ItemDetailCard(props: ItemDetailProps) {
         strg.col === props.item.storage.col,
     ) || unassignedStorage;
 
-  return (
+  return <>
+   { item && (
     <AutoSizer>
       {(cardSize: Size) => (
         <Card sx={{ height: cardSize.height, width: cardSize.width }}>
@@ -204,11 +261,12 @@ export default function ItemDetailCard(props: ItemDetailProps) {
                     item.tags = item.tags?.filter((tg) => tg !== tag);
                     updateItem(item);
                   }}
+                  key={`cat-${tag}`}
                 />
               ))}
             </Stack>
 
-            <AddTagDialog open={open} onClose={handleClose} />
+            <AddTagDialog open={open} onClose={handleClose} onUpdate={props.setItem} item={props.item} categories={props.categories} />
             <StockCounter
               count={item?.stock || 0}
               setCount={(count) => {
@@ -235,5 +293,7 @@ export default function ItemDetailCard(props: ItemDetailProps) {
         </Card>
       )}
     </AutoSizer>
-  );
+  )
+}
+</>;
 }

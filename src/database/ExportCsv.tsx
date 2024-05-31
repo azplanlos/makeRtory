@@ -10,6 +10,7 @@ import { CloudDownload } from "@mui/icons-material";
 export type CsvElectronicItem = ElectronicItem &
   StorageItem & {
     storage?: string;
+    tags?: string;
     box?: number;
     shortName?: string;
     row?: number;
@@ -27,11 +28,12 @@ function exportCsv(
         [...storageData, ...itemData]
           .map((item) => {
             if (isElectronicItem(item)) {
-              const { storage, image, ...itemStoreData } =
+              const { tags, storage, image, ...itemStoreData } =
                 item as ElectronicItem;
               const part = item as ElectronicItem;
               return {
                 ...itemStoreData,
+                tags: tags?.join(','),
                 storage: `${part.storage?.box}.${part.storage?.row}.${part.storage?.col}`,
               } as CsvElectronicItem;
             } else {
@@ -78,6 +80,7 @@ export default function ExportCsv(props: ExportCsvProps) {
     <IconButton
       onClick={() => exportCsv(props.getAll, props.getAllStorage)}
       disabled={props.disabled}
+      color="inherit"
     >
       <CloudDownload />
     </IconButton>

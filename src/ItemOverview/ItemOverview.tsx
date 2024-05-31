@@ -23,6 +23,8 @@ type ItemOverviewProps = {
   showAddRow: boolean;
   onCloseEdit: () => void;
   storages: StorageItem[];
+  categories: string[];
+  filter?: string | undefined;
 };
 
 export default function ItemOverview(props: ItemOverviewProps) {
@@ -70,7 +72,7 @@ export default function ItemOverview(props: ItemOverviewProps) {
     getByIndex("partNumber", originalPartNumber || item.partNumber!!).then(
       (storedItem) => {
         if (storedItem) deleteRecord(storedItem.partNumber);
-        add(item);
+        add(item).then(() => console.log("added " + JSON.stringify(item)));
       },
       (error) => {
         console.log(error);
@@ -89,6 +91,7 @@ export default function ItemOverview(props: ItemOverviewProps) {
           setItem={(item) => updateItem(item, item.partNumber)}
           cardClose={() => props.setSelectedItem("")}
           storages={props.storages}
+          categories={props.categories}
         />
       </Grid>
     ) : (
@@ -124,7 +127,7 @@ export default function ItemOverview(props: ItemOverviewProps) {
               {props.parts
                 ?.filter(
                   (part) =>
-                    part.partNumber
+                    ((part.partNumber
                       ?.toUpperCase()
                       ?.includes(props.searchString.toUpperCase()) ||
                     part.title
@@ -132,7 +135,9 @@ export default function ItemOverview(props: ItemOverviewProps) {
                       ?.includes(props.searchString.toUpperCase()) ||
                     part.manufactorer
                       ?.toUpperCase()
-                      ?.includes(props.searchString.toUpperCase()),
+                      ?.includes(props.searchString.toUpperCase())) && (
+                        props.filter === undefined || part.tags?.includes(props.filter)
+                      ))
                 )
                 ?.map((part) => (
                   <ItemRowOverview

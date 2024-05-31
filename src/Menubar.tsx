@@ -10,11 +10,13 @@ import SearchIcon from "@mui/icons-material/Search";
 import ImportCsv, { ImportCsvProps } from "./database/ImportCsv";
 import ExportCsv from "./database/ExportCsv";
 import {
+  FormControl,
   ListItemIcon,
   ListItemText,
   Menu,
   MenuItem,
   MenuList,
+  Select,
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { useState } from "react";
@@ -72,11 +74,14 @@ export type menubarProps = {
   addItem: () => void;
   currentPage: Pages;
   setCurrentPage: (page: Pages) => void;
+  applyFilter: (tag: string | undefined) => void;
+  categories: string[];
 };
 
 export default function Menubar(props: menubarProps) {
   const [showMenu, setShowMenu] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
+  const [filter, setFilter] = useState("-all-");
 
   const closeMenu = () => {
     setShowMenu(false);
@@ -86,7 +91,7 @@ export default function Menubar(props: menubarProps) {
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
+        <AppBar position="static" color="primary">
           <Toolbar>
             <IconButton
               size="large"
@@ -105,13 +110,29 @@ export default function Menubar(props: menubarProps) {
               variant="h6"
               noWrap
               component="div"
-              sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+              sx={{ display: { xs: "none", sm: "block" } }}
             >
               makeRtory
             </Typography>
+            <Box display='flex' flexGrow={1} marginLeft="2%">
+            {props.currentPage === Pages.OVERVIEW && <FormControl><Select color="primary" value={filter} onChange={(e) => {
+              setFilter(e.target.value);
+              props.applyFilter(e.target.value !== '-all-' ? e.target.value : undefined);
+              setTimeout(() => {
+                (document?.activeElement as HTMLInputElement)?.blur();
+              }, 0);
+            }} style={{color: 'white'}} variant="standard">
+              <MenuItem value="-all-" key="all">Alle</MenuItem>
+              { props.categories.map(cat => 
+                <MenuItem value={cat} key={cat}>{cat}</MenuItem>
+              ) }
+            </Select></FormControl>
+            }
+            </Box>
             <IconButton
               onClick={props.addItem}
               disabled={props.currentPage === Pages.SETTINGS}
+              color="inherit"
             >
               <Add />
             </IconButton>

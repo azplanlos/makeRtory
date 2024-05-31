@@ -4,13 +4,20 @@ import {
   ListItemIcon,
   ListItemText,
   ListSubheader,
+  Switch,
   TextField,
 } from "@mui/material";
 import React, { useState } from "react";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import PasswordIcon from "@mui/icons-material/Password";
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 
-export default function SettingsTable() {
+type SettingsTableProps = {
+  setDark: (dark: boolean) => void;
+  dark: boolean;
+}
+
+export default function SettingsTable(props: SettingsTableProps) {
   const [clientId, setClientId] = useState(
     localStorage.getItem("nexar-clientid") || "",
   );
@@ -53,6 +60,14 @@ export default function SettingsTable() {
             localStorage.setItem("nexar-clientsecret", event.target.value);
           }}
         />
+      </ListItem>
+      <ListSubheader>Anzeige</ListSubheader>
+      <ListItem>
+        <ListItemIcon>
+            <DarkModeIcon />
+          </ListItemIcon>
+          <ListItemText id="dark" primary="Dunkler Modus" />
+          <Switch checked={props.dark} onChange={(e) => props.setDark(e.target.checked)} />
       </ListItem>
     </List>
   );
