@@ -5,6 +5,7 @@ import CardMedia from "@mui/material/CardMedia";
 import { ElectronicItem, StorageItem } from "../model/ElectronicItem";
 import {
   Avatar,
+  Badge,
   Box,
   Button,
   CardHeader,
@@ -21,9 +22,11 @@ import {
   ListItem,
   ListItemText,
   MenuItem,
+  Popover,
   Select,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
 import MoreIcon from "@mui/icons-material/More";
 import UpdateAttributesFromDigikey from "../UpdateAttributes";
@@ -40,6 +43,7 @@ import StockCounter from "../StockCounter";
 import CloseIcon from "@mui/icons-material/Close";
 import Print from "@mui/icons-material/Print";
 import { unassignedStorage } from "../model/StorageComponent";
+import Inventory2Icon from "@mui/icons-material/Inventory2";
 
 const FixedSizeList = _FixedSizeList as ComponentType<FixedSizeListProps>;
 
@@ -190,6 +194,8 @@ function AddTagDialog(props: AddTagDialogProps) {
 
 export default function ItemDetailCard(props: ItemDetailProps) {
   const [open, setOpen] = React.useState(false);
+  const [storagePopover, setStoragePopover] = useState(false);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -239,9 +245,48 @@ export default function ItemDetailCard(props: ItemDetailProps) {
         <AutoSizer>
           {(cardSize: Size) => (
             <Card sx={{ height: cardSize.height, width: cardSize.width }}>
+              <Popover
+                id="mouse-over-popover"
+                sx={{
+                  pointerEvents: "none",
+                }}
+                open={storagePopover}
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+                onClose={() => setStoragePopover(false)}
+                disableRestoreFocus
+              >
+                <Typography
+                  sx={{ p: 1 }}
+                >{`${storage.boxName} (Fach ${storage.row}/${storage.col})`}</Typography>
+              </Popover>
               <CardHeader
                 avatar={
-                  <Avatar aria-label="recipe">{storage?.shortName}</Avatar>
+                  <Badge
+                    overlap="rectangular"
+                    badgeContent={storage.shortName}
+                    color="primary"
+                    slotProps={{
+                      badge: {
+                        onMouseEnter: (e) => {
+                          setStoragePopover(true);
+                          setAnchorEl(e.currentTarget);
+                        },
+                        onMouseLeave: () => setStoragePopover(false),
+                      },
+                    }}
+                  >
+                    <Avatar alt={storage.boxName}>
+                      <Inventory2Icon />
+                    </Avatar>
+                  </Badge>
                 }
                 action={
                   <>
