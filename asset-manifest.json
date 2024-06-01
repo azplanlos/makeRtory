@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/makeRtory/static/css/main.073c9b0a.css",
-    "main.js": "/makeRtory/static/js/main.62ba56fd.js",
+    "main.js": "/makeRtory/static/js/main.b69e9067.js",
     "static/js/787.fe280e75.chunk.js": "/makeRtory/static/js/787.fe280e75.chunk.js",
     "index.html": "/makeRtory/index.html",
     "main.073c9b0a.css.map": "/makeRtory/static/css/main.073c9b0a.css.map",
-    "main.62ba56fd.js.map": "/makeRtory/static/js/main.62ba56fd.js.map",
+    "main.b69e9067.js.map": "/makeRtory/static/js/main.b69e9067.js.map",
     "787.fe280e75.chunk.js.map": "/makeRtory/static/js/787.fe280e75.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.073c9b0a.css",
-    "static/js/main.62ba56fd.js"
+    "static/js/main.b69e9067.js"
   ]
 }
