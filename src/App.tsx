@@ -9,6 +9,8 @@ import ItemOverview from "./ItemOverview/ItemOverview";
 import { Pages } from "./pages";
 import SettingsTable from "./Settings/SettingsTable";
 import StorageOverview from "./StorageView/StorageOverview";
+import { useLocation } from "react-router-dom";
+import React from "react";
 
 initDB(DBConfig);
 
@@ -29,6 +31,16 @@ function App() {
   const [theme, setTheme] = useState<Theme>(createTheme());
   const [categories, setCategories] = useState<string[]>([]);
   const [filter, setFilter] = useState<string | undefined>(undefined);
+  const { search } = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(search);
+    if (params.get('part')) {
+      setCurrentPage(Pages.OVERVIEW);
+      setSelectedItem(params.get('part') || "");
+    }
+  }, [search])
+
 
   useEffect(
     () =>
@@ -57,7 +69,8 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
+    <CssBaseline />
+        <React.Fragment>
       <Menubar
         importCsv={{
           update: setParts,
@@ -115,6 +128,7 @@ function App() {
           />
         )}
       </div>
+    </React.Fragment>
     </ThemeProvider>
   );
 }

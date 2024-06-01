@@ -11,6 +11,7 @@ import React, { useState } from "react";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import PasswordIcon from "@mui/icons-material/Password";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
+import PrintIcon from '@mui/icons-material/Print';
 
 type SettingsTableProps = {
   setDark: (dark: boolean) => void;
@@ -23,6 +24,9 @@ export default function SettingsTable(props: SettingsTableProps) {
   );
   const [clientSecret, setClientSecret] = useState(
     localStorage.getItem("nexar-clientsecret") || "",
+  );
+  const [labelPrintUrl, setLabelPrintUrl] = useState(
+    localStorage.getItem("niimbot-server-url") || "",
   );
 
   return (
@@ -72,6 +76,23 @@ export default function SettingsTable(props: SettingsTableProps) {
           onChange={(e) => props.setDark(e.target.checked)}
         />
       </ListItem>
+      <ListSubheader>Label Drucker</ListSubheader>
+      <ListItem>
+        <ListItemIcon> 
+          <PrintIcon />
+        </ListItemIcon>
+        <ListItemText primary="Niimbot Printserver URL" />
+        <TextField
+          type="text"
+          variant="standard"
+          sx={{ width: "80%" }}
+          value={labelPrintUrl}
+          onChange={(event) => {
+            setLabelPrintUrl(event.target.value);
+            localStorage.setItem("niimbot-server-url", event.target.value);
+          }}
+        />
+        </ListItem>
     </List>
   );
 }

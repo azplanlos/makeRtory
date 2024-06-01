@@ -27,6 +27,7 @@
     "react-dom": "^18.2.0",
     "react-indexed-db-hook": "^1.0.14",
     "react-qr-code": "^2.0.12",
+    "react-router-dom": "^6.23.1",
     "react-scripts": "5.0.1",
     "react-virtualized-auto-sizer": "^1.0.20",
     "react-window": "^1.8.10",

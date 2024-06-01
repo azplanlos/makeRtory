@@ -44,6 +44,8 @@ import Print from "@mui/icons-material/Print";
 import { unassignedStorage } from "../model/StorageComponent";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
+import { PrintLabel } from "./PrintLabel";
+import html2canvas from "html2canvas";
 
 const FixedSizeList = _FixedSizeList as ComponentType<FixedSizeListProps>;
 
@@ -194,6 +196,7 @@ function AddTagDialog(props: AddTagDialogProps) {
 
 export default function ItemDetailCard(props: ItemDetailProps) {
   const [open, setOpen] = React.useState(false);
+  const [printActive, setPrintActive] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -206,6 +209,7 @@ export default function ItemDetailCard(props: ItemDetailProps) {
   const item = props.item;
   const setItem = props.setItem;
   const printRef = React.useRef<HTMLImageElement>(null);
+  const labelRef = React.useRef<HTMLDivElement>(null);
 
   const [blobUrl, setBlobUrl] = useState<string | undefined>("image-solid.png");
   React.useEffect(() => {
@@ -228,6 +232,19 @@ export default function ItemDetailCard(props: ItemDetailProps) {
   item?.attributes?.forEach((key, value) => {
     listItems.push();
   });
+
+  const printLabel = async() => {
+    setPrintActive(true);
+    setTimeout(async () => {
+      if (labelRef.current && localStorage.getItem("niimbot-server-url")) {
+        const canvas = await html2canvas(labelRef.current, {width: 380, height: 96, scale: 1});
+        setPrintActive(false);
+        const data = canvas.toDataURL('image/png');
+        fetch(`${localStorage.getItem("niimbot-server-url")}/print`, {method: "post", headers: {"content-type": "application/json"}, body: JSON.stringify({image: data.split(',')[1], density: 2, quantity: 1})});
+      }
+    }, 1);
+    
+  }
 
   const storage =
     props.storages.find(
@@ -273,7 +290,7 @@ export default function ItemDetailCard(props: ItemDetailProps) {
                     <IconButton onClick={handleClickOpen}>
                       <MoreIcon />
                     </IconButton>
-                    <IconButton aria-label="print label">
+                    <IconButton aria-label="print label" onClick={async () => await printLabel()} disabled={!localStorage.getItem("niimbot-server-url")}>
                       <Print />
                     </IconButton>
                     <UpdateAttributesFromDigikey
@@ -358,6 +375,7 @@ export default function ItemDetailCard(props: ItemDetailProps) {
           )}
         </AutoSizer>
       )}
+      <PrintLabel ref={labelRef} visible={printActive} item={item} />
     </>
   );
 }
