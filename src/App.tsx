@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import { ElectronicItem, StorageItem } from "./model/ElectronicItem";
 import { CssBaseline, Theme, ThemeProvider, createTheme } from "@mui/material";
@@ -67,6 +67,11 @@ function App() {
     getAll().then((allItems) => setCategories(filterCategories(allItems)));
   }, [getAll]);
 
+  const setPartsCallback = useCallback((prts: ElectronicItem[]) => {
+    setParts(prts);
+    setCategories(filterCategories(prts || []));
+  }, [])
+
   return (
     <ThemeProvider theme={theme}>
     <CssBaseline />
@@ -100,10 +105,7 @@ function App() {
         {currentPage === Pages.OVERVIEW ? (
           <ItemOverview
             parts={parts}
-            setParts={(prts) => {
-              setParts(prts);
-              setCategories(filterCategories(prts || []));
-            }}
+            setParts={setPartsCallback}
             selectedItem={selectedItem}
             setSelectedItem={setSelectedItem}
             searchString={searchString}

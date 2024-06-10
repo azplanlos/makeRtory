@@ -37,11 +37,13 @@ export default function ItemOverview(props: ItemOverviewProps) {
     price: 0.0,
   };
 
+  const setParts = props.setParts;
+
   useEffect(() => {
     getAll().then((partsFromDB) => {
-      return props.setParts(partsFromDB);
+      setParts(partsFromDB);
     });
-  }, [getAll, props.setParts, props]);
+  }, [getAll, setParts]);
 
   const deleteItem = (item: ElectronicItem) => {
     if (item.partNumber) {

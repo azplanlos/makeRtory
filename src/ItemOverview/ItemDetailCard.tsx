@@ -214,13 +214,13 @@ export default function ItemDetailCard(props: ItemDetailProps) {
   const [blobUrl, setBlobUrl] = useState<string | undefined>("image-solid.png");
   React.useEffect(() => {
     setBlobUrl(
-      item?.image !== undefined && item?.image?.size > 0
-        ? URL.createObjectURL(item.image)
-        : item?.imageUrl === undefined
+      props.item?.image !== undefined && props.item?.image?.size > 0
+        ? URL.createObjectURL(props.item.image)
+        : props.item?.imageUrl === undefined
           ? "image-solid.png"
           : undefined,
     );
-  }, [open, props.item?.imageUrl, item?.image, item?.imageUrl]);
+  }, [open, props.item?.imageUrl, props.item?.image]);
 
   function updateItem(newItem: ElectronicItem): void {
     console.log("update item");
@@ -307,12 +307,12 @@ export default function ItemDetailCard(props: ItemDetailProps) {
                     </IconButton>
                   </>
                 }
-                title={item?.title ?? item?.partNumber}
+                title={item?.partNumber}
                 titleTypographyProps={{
                   variant: "h5",
                   style: { fontWeight: "bolder" },
                 }}
-                subheader={item?.manufactorer}
+                subheader={`${item.title} - ${item?.manufactorer}`}
               />
               <CardMedia
                 component="img"
